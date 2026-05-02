@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.0 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.1 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -429,9 +429,9 @@
 
   /* ── SPARKLINE ── */
   .sparkline-container {
-    height: 36px;
-    margin-top: 4px;
-    position: relative;
+    height: 0px;
+    margin: 0;
+    overflow: hidden;
   }
 
   .sparkline-container canvas {
@@ -489,9 +489,8 @@
   /* ── EXPANDED PLAYER DETAIL ── */
   .player-detail {
     display: none;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 8px;
   }
 
   .player-detail.open { display: block; }
@@ -857,7 +856,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.0</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.1</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1168,7 +1167,7 @@ function renderPlayerCard(p, rank) {
           </div>
         </div>
         <div class="player-right">
-          <div class="score-display ${scoreClass}" style="font-size:26px;font-weight:600;letter-spacing:-0.5px">${p.score || 0}<span style="font-size:11px;font-weight:400;color:var(--gray2);margin-left:1px">/100</span></div>
+          <div class="score-display ${scoreClass}" style="font-size:26px;font-weight:600;letter-spacing:-0.5px">${p.score || 0}</div>
           ${scoreChangeHtml}
           ${rankChangeHtml}
         </div>
@@ -1226,7 +1225,7 @@ function renderSignalGrid(p) {
     const display = isNeg ? Math.abs(val) : val;
     const c = getSignalColors(display, isNeg);
     return `
-      <div class="signal-row" style="background:${c.bg};border:1px solid ${c.border};border-radius:8px;padding:8px 10px;margin-bottom:4px">
+      <div class="signal-row" style="background:${c.bg};border:1px solid ${c.border};border-radius:6px;padding:5px 10px;margin-bottom:3px">
         <span class="signal-name" style="color:${c.text};opacity:0.8">${s.label}</span>
         <span class="signal-score" style="color:${c.text};font-weight:600">${display}</span>
       </div>
