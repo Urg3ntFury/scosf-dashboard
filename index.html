@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.5 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -779,7 +779,7 @@
   .source-status-badge.standby { background: rgba(100,116,139,0.1); color: var(--gray2); }
 
   /* ── BOTTOM NAV ── */
-  .bottom-nav {
+  .bottom-nav { display: none !important; /* replaced by clickable summary cards */ } .bottom-nav-DISABLED {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -850,6 +850,138 @@
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Pipeline submenu */
+  .pipeline-bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pipe-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .pipe-btn.active {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  /* Clickable summary cards */
+  .summary-card.clickable {
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .summary-card.clickable:active { transform: scale(0.96); }
+  .summary-card.active-filter {
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* License icon */
+  .license-icon {
+    display: inline-block;
+    font-size: 9px;
+    color: #f59e0b;
+    margin-left: 4px;
+    vertical-align: middle;
+    cursor: help;
+  }
+
+  /* Draft eligible pill */
+  .draft-pill {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(99,102,241,0.2);
+    color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,0.3);
+    letter-spacing: 0.3px;
+  }
+
+  /* Card suggestions */
+  .card-suggestions {
+    margin: 12px 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .cs-header {
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.04);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .cs-tier-block {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .cs-tier-block:last-child { border-bottom: none; }
+  .cs-tier-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .cs-tier-label.low { color: #94a3b8; }
+  .cs-tier-label.mid { color: #60a5fa; }
+  .cs-tier-label.high { color: #fcd34d; }
+  .cs-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 3px;
+  }
+  .cs-card-name {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    flex: 1;
+    padding-right: 8px;
+  }
+  .cs-card-price {
+    font-size: 11px;
+    font-weight: 600;
+    color: #34d399;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+  .cs-card-qty {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+  .cs-loading {
+    padding: 16px;
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+  }
+  .cs-empty {
+    padding: 10px 12px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    font-style: italic;
+  }
+
 </style>
 </head>
 <body>
@@ -877,7 +1009,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.5</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -902,6 +1034,14 @@
     NBA
     <span class="badge" id="badge-NBA" style="display:none"></span>
   </div>
+</div>
+
+<!-- NCAA FB Pipeline Submenu — only shown when NFL is active -->
+<div class="pipeline-bar" id="pipelineBar" style="display:none">
+  <button class="pipe-btn active" onclick="setPipeline('all')" id="pipe-all">ALL NCAA</button>
+  <button class="pipe-btn" onclick="setPipeline('2027')" id="pipe-2027">2027</button>
+  <button class="pipe-btn" onclick="setPipeline('2028')" id="pipe-2028">2028</button>
+  <button class="pipe-btn" onclick="setPipeline('2029')" id="pipe-2029">2029+</button>
 </div>
 
 <!-- Timeframe Bar -->
@@ -931,25 +1071,7 @@
   <div id="playerList"></div>
 </div>
 
-<!-- Bottom Nav -->
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="setView('rankings')">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label">Rankings</div>
-  </button>
-  <button class="nav-item" onclick="setView('watchlist')">
-    <div class="nav-icon">👁</div>
-    <div class="nav-label">Watchlist</div>
-  </button>
-  <button class="nav-item" onclick="setView('strong')">
-    <div class="nav-icon">🔥</div>
-    <div class="nav-label">Strong Buy</div>
-  </button>
-  <button class="nav-item" onclick="setView('all')">
-    <div class="nav-icon">☰</div>
-    <div class="nav-label">All</div>
-  </button>
-</nav>
+<!-- Bottom Nav — removed, replaced by clickable summary cards -->
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────
@@ -961,7 +1083,8 @@ let state = {
   sport: 'NFL',
   timeframe: 7,
   view: 'rankings',
-  data: { NFL: null, MLB: null, NBA: null },
+  pipeline: 'all',
+  data: { NFL: null, MLB: null, NBA: null, 'NCAA FB': null },
   history: {},
   sources: null,
   summary: null,
@@ -1083,22 +1206,23 @@ function updateSummaryStrip() {
     total = s.total || total;
   }
 
+  const monitor = players.filter(p => p.tier === 'MONITOR' || !p.tier).length;
   strip.innerHTML = `
-    <div class="summary-card total">
+    <div class="summary-card total clickable ${state.view === 'all' ? 'active-filter' : ''}" onclick="setView('all')">
       <div class="sc-value">${total}</div>
-      <div class="sc-label">Tracked</div>
+      <div class="sc-label">All</div>
     </div>
-    <div class="summary-card strong-buy">
-      <div class="sc-value">${strongBuy}</div>
-      <div class="sc-label">Strong Buy</div>
-    </div>
-    <div class="summary-card buy-candidate">
-      <div class="sc-value">${buyCandidate}</div>
+    <div class="summary-card strong-buy clickable ${state.view === 'strong' ? 'active-filter' : ''}" onclick="setView('strong')">
+      <div class="sc-value">${strongBuy + buyCandidate}</div>
       <div class="sc-label">Buy</div>
     </div>
-    <div class="summary-card watchlist">
+    <div class="summary-card watchlist clickable ${state.view === 'watchlist' ? 'active-filter' : ''}" onclick="setView('watchlist')">
       <div class="sc-value">${watchlist}</div>
       <div class="sc-label">Watchlist</div>
+    </div>
+    <div class="summary-card monitor clickable ${state.view === 'rankings' ? 'active-filter' : ''}" onclick="setView('rankings')">
+      <div class="sc-value">${monitor}</div>
+      <div class="sc-label">Monitor</div>
     </div>
   `;
 }
@@ -1122,6 +1246,12 @@ function renderPlayerList() {
   } else {
     titleEl.textContent = 'TOP PLAYERS';
     players = players.slice(0, 20);
+  }
+
+  // Filter NCAA FB by draft class if pipeline is set
+  if (state.sport === 'NFL' && state.pipeline !== 'all') {
+    const yr = parseInt(state.pipeline);
+    players = players.filter(p => parseInt(p.draftEligible) === yr);
   }
 
   // Sort by score descending
@@ -1174,10 +1304,14 @@ function renderPlayerCard(p, rank) {
         <div class="player-left">
           <div class="rank-badge">${rank}</div>
           <div class="player-info">
-            <div class="player-name">${p.name}</div>
+            <div class="player-name">
+              ${p.name}
+              ${p.cardCompany && p.cardCompany !== 'Bowman' ? `<span class="license-icon" title="Personal license: ${p.cardCompany}">◆</span>` : ''}
+            </div>
             <div class="player-meta">
               <span class="player-team">${p.team || ''}</span>
               <span class="player-pos">${p.position || ''}</span>
+              ${p.draftEligible ? `<span class="draft-pill">${p.draftEligible}</span>` : ''}
               <span class="tier-pill ${tierClass}">${
   p.tier === 'STRONG BUY' ? '▲ Strong buy' :
   p.tier === 'BUY CANDIDATE' ? '● Buy candidate' :
@@ -1213,6 +1347,10 @@ function renderPlayerCard(p, rank) {
         <div class="detail-signals">
           ${renderSignalGrid(p)}
         </div>
+        ${(p.tier === 'WATCHLIST' || p.tier === 'BUY CANDIDATE' || p.tier === 'STRONG BUY') ? `
+        <div class="card-suggestions" id="suggestions-${rank}">
+          ${renderCardSuggestions(p)}
+        </div>` : ''}
         <button class="brief-btn" onclick="generateBrief(event, '${p.name}', ${p.row}, '${p.sport || state.sport}')" id="brief-btn-${rank}">
           <span class="btn-icon">⚡</span>
           Generate AI Brief
@@ -1220,6 +1358,60 @@ function renderPlayerCard(p, rank) {
         <div class="brief-output" id="brief-output-${rank}"></div>
       </div>
     </div>
+  `;
+}
+
+
+// ── RENDER CARD SUGGESTIONS ───────────────────────────────────────────────
+function renderCardSuggestions(p) {
+  const raw = p.cardSuggestions || p.card_suggestions;
+  if (!raw) {
+    return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Suggestions generating — check back shortly</div>`;
+  }
+
+  let data;
+  try {
+    data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+  } catch(e) {
+    return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Suggestions unavailable</div>`;
+  }
+
+  const tiers = [
+    { key: 'low', label: 'LOW  <$25', cls: 'low' },
+    { key: 'mid', label: 'MID  $25-$100', cls: 'mid' },
+    { key: 'high', label: 'HIGH  $100-$300', cls: 'high' }
+  ];
+
+  const licenseNote = p.cardCompany && p.cardCompany !== 'Bowman'
+    ? `<div style="padding:6px 12px;font-size:10px;color:#f59e0b;border-bottom:1px solid rgba(255,255,255,0.05)">◆ ${p.cardCompany} exclusive — target ${p.cardCompany} products only</div>`
+    : '';
+
+  const draftNote = p.draftEligible
+    ? `<div style="padding:4px 12px;font-size:10px;color:#a5b4fc;border-bottom:1px solid rgba(255,255,255,0.05)">Draft eligible: ${p.draftEligible}</div>`
+    : '';
+
+  const tierBlocks = tiers.map(t => {
+    const cards = data[t.key] || [];
+    if (!cards.length) return '';
+    const rows = cards.map(c => `
+      <div class="cs-card-row">
+        <span class="cs-card-name">${c.card || ''}</span>
+        <span class="cs-card-price">${c.price || ''}</span>
+        <span class="cs-card-qty">${c.qty || ''}</span>
+      </div>`).join('');
+    return `<div class="cs-tier-block">
+      <div class="cs-tier-label ${t.cls}">${t.label}</div>
+      ${rows}
+    </div>`;
+  }).join('');
+
+  const genDate = data.generated ? `<span style="float:right;font-weight:400;opacity:0.5">${data.generated}</span>` : '';
+
+  return `
+    <div class="cs-header">CARD TARGETS ${genDate}</div>
+    ${licenseNote}
+    ${draftNote}
+    ${tierBlocks || '<div class="cs-empty">No suggestions available</div>'}
   `;
 }
 
@@ -1593,6 +1785,29 @@ function setTimeframe(days, btn) {
 }
 
 // ── VIEW ──────────────────────────────────────────────────────────────────
+function setPipeline(pipeline) {
+  state.pipeline = pipeline;
+  state.expandedPlayer = null;
+
+  // Update pipeline button active state
+  document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('pipe-' + pipeline);
+  if (btn) btn.classList.add('active');
+
+  // Load NCAA FB data for this draft class
+  const draftYear = pipeline === 'all' ? null : pipeline;
+
+  if (!state.data['NCAA FB'] || draftYear) {
+    fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 100, draftYear })
+      .then(res => {
+        state.data['NCAA FB'] = res.players || [];
+        renderPlayerList();
+      }).catch(() => renderPlayerList());
+  } else {
+    renderPlayerList();
+  }
+}
+
 function setView(view) {
   state.view = view;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
