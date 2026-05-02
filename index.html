@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.1 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.2 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -486,6 +486,28 @@
     display: none;
   }
 
+  /* ── MINI SIGNAL BARS ── */
+  .mini-bars {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+    align-items: flex-end;
+    height: 16px;
+    padding: 0 2px;
+  }
+  .mini-bar-wrap {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+  .mini-bar {
+    width: 100%;
+    border-radius: 2px;
+    min-height: 2px;
+    transition: height 0.3s ease;
+  }
+
   /* ── EXPANDED PLAYER DETAIL ── */
   .player-detail {
     display: none;
@@ -856,7 +878,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.1</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.2</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1179,6 +1201,15 @@ function renderPlayerCard(p, rank) {
 
 
 
+      <div class="mini-bars">
+        ${['s1Vegas','s2Usage','s3Transactions','s4Reporter','s5Prospects','s6PSA','s7Search'].map(k => {
+          const v = parseFloat(p[k]) || 0;
+          const pct = Math.max(4, (v/10)*100);
+          const col = v >= 9 ? '#34d399' : v >= 7 ? '#fcd34d' : v >= 4 ? '#93c5fd' : 'rgba(100,116,139,0.25)';
+          return `<div class="mini-bar-wrap"><div class="mini-bar" style="height:${pct}%;background:${col}"></div></div>`;
+        }).join('')}
+      </div>
+
       <div class="player-detail ${isExpanded ? 'open' : ''}" id="detail-${p.name.replace(/\s/g,'_')}">
         <div class="signal-bars" id="bars-${rank}" style="margin-bottom:12px"></div>
         <div class="detail-signals">
@@ -1209,14 +1240,14 @@ function getSignalColors(val, isNeg) {
 
 function renderSignalGrid(p) {
   const signals = [
-    { label: 'VEGAS', val: p.s1Vegas },
+    { label: 'ODDS', val: p.s1Vegas },
     { label: 'USAGE', val: p.s2Usage },
-    { label: 'TRANS', val: p.s3Transactions },
-    { label: 'PRESS', val: p.s4Reporter },
-    { label: 'PROSP', val: p.s5Prospects },
-    { label: 'PSA', val: p.s6PSA },
-    { label: 'SEARCH', val: p.s7Search },
-    { label: 'NEG', val: -(p.negSignals || 0) },
+    { label: 'TRANSACT', val: p.s3Transactions },
+    { label: 'REPORTER', val: p.s4Reporter },
+    { label: 'PROSPECT', val: p.s5Prospects },
+    { label: 'PSA VOL', val: p.s6PSA },
+    { label: 'SOCIAL', val: p.s7Search },
+    { label: 'NEG SIG', val: -(p.negSignals || 0) },
   ];
 
   return signals.map(s => {
