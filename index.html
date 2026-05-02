@@ -505,7 +505,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--navy3);
     border-radius: 8px;
     padding: 7px 10px;
   }
@@ -1124,7 +1123,7 @@ function renderPlayerList() {
   // Draw sparklines after render
   players.forEach((p, i) => {
     drawSparkline('spark-' + (i + 1), getHistoryForPlayer(p.name));
-    drawSignalBars('bars-' + (i + 1), p);
+    // Signal bars drawn on expand only — not on initial render
   });
 }
 
@@ -1177,9 +1176,10 @@ function renderPlayerCard(p, rank) {
         <canvas id="spark-${rank}" width="400" height="72"></canvas>
       </div>
 
-      <div class="signal-bars" id="bars-${rank}"></div>
+
 
       <div class="player-detail ${isExpanded ? 'open' : ''}" id="detail-${p.name.replace(/\s/g,'_')}">
+        <div class="signal-bars" id="bars-${rank}" style="margin-bottom:12px"></div>
         <div class="detail-signals">
           ${renderSignalGrid(p)}
         </div>
@@ -1207,12 +1207,13 @@ function renderSignalGrid(p) {
 
   return signals.map(s => {
     const val = parseFloat(s.val) || 0;
-    const cls = val >= 7 ? 'high' : val >= 4 ? 'mid' : 'low';
-    const display = s.label === 'NEG' ? (val < 0 ? val : '0') : val;
+    const isNeg = s.label === 'NEG';
+    const display = isNeg ? Math.abs(val) : val;
+    const c = getSignalColors(display, isNeg);
     return `
-      <div class="signal-row">
-        <span class="signal-name">${s.label}</span>
-        <span class="signal-score ${cls}">${display}</span>
+      <div class="signal-row" style="background:${c.bg};border:1px solid ${c.border};border-radius:8px;padding:8px 10px;margin-bottom:4px">
+        <span class="signal-name" style="color:${c.text};opacity:0.8">${s.label}</span>
+        <span class="signal-score" style="color:${c.text};font-weight:600">${display}</span>
       </div>
     `;
   }).join('');
@@ -1336,6 +1337,14 @@ async function togglePlayer(name, row, sport) {
 
   state.expandedPlayer = name;
   detail.classList.add('open');
+
+  // Draw signal bars now that the expanded section is visible
+  if (state.players) {
+    const idx = state.players.findIndex(p => p.name === name);
+    if (idx !== -1) {
+      drawSignalBars('bars-' + (idx + 1), state.players[idx]);
+    }
+  }
 
   // Load history for sparkline if not cached
   if (!state.history[name]) {
