@@ -1195,6 +1195,19 @@ function renderPlayerCard(p, rank) {
   `;
 }
 
+function getSignalColors(val, isNeg) {
+  if (isNeg) {
+    if (val <= 0) return { bg: 'rgba(100,116,139,0.1)', text: '#94a3b8', border: 'rgba(100,116,139,0.2)' };
+    if (val >= 15) return { bg: 'rgba(220,38,38,0.18)', text: '#fca5a5', border: 'rgba(252,165,165,0.4)' };
+    return { bg: 'rgba(217,119,6,0.18)', text: '#fcd34d', border: 'rgba(252,211,77,0.35)' };
+  }
+  if (val >= 9) return { bg: 'rgba(16,185,129,0.18)', text: '#34d399', border: 'rgba(52,211,153,0.4)' };
+  if (val >= 7) return { bg: 'rgba(245,158,11,0.18)', text: '#fcd34d', border: 'rgba(252,211,77,0.4)' };
+  if (val >= 4) return { bg: 'rgba(59,130,246,0.18)', text: '#93c5fd', border: 'rgba(147,197,253,0.4)' };
+  if (val >= 1) return { bg: 'rgba(100,116,139,0.15)', text: '#94a3b8', border: 'rgba(100,116,139,0.25)' };
+  return { bg: 'rgba(100,116,139,0.08)', text: '#475569', border: 'rgba(100,116,139,0.15)' };
+}
+
 function renderSignalGrid(p) {
   const signals = [
     { label: 'VEGAS', val: p.s1Vegas },
