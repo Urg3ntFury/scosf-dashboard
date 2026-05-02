@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.1 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1009,7 +1009,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.1</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1037,7 +1037,7 @@
 </div>
 
 <!-- NCAA FB Pipeline Submenu — only shown when NFL is active -->
-<div class="pipeline-bar" id="pipelineBar" style="display:none">
+<div class="pipeline-bar" id="pipelineBar" style="display:flex">
   <button class="pipe-btn active" onclick="setPipeline('all')" id="pipe-all">ALL NCAA</button>
   <button class="pipe-btn" onclick="setPipeline('2027')" id="pipe-2027">2027</button>
   <button class="pipe-btn" onclick="setPipeline('2028')" id="pipe-2028">2028</button>
@@ -1094,6 +1094,9 @@ let state = {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Show pipeline bar since NFL is default
+  const pb = document.getElementById('pipelineBar');
+  if (pb) pb.style.display = 'flex';
   loadData(false);
 });
 
