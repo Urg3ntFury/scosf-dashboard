@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.5 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.6 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1039,7 +1039,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.5</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.6</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1355,31 +1355,49 @@ function renderPlayerList() {
   const remaining = players.length - currentLimit;
   const hasMore = remaining > 0;
 
-  container.innerHTML = visiblePlayers.map((p, i) => renderPlayerCard(p, i + 1)).join('');
+  // Check if this is a "show more" append or a fresh render
+  const existingCards = container.querySelectorAll('.player-card').length;
+  const isAppend = existingCards > 0 && currentLimit > PAGE_SIZE;
 
-  // Show More button — appends next 20
+  if (isAppend) {
+    // Remove old load-more button before appending
+    const oldBtn = container.querySelector('.load-more-btn');
+    if (oldBtn) oldBtn.remove();
+    // Append only the new batch of cards
+    const newCards = visiblePlayers.slice(existingCards);
+    newCards.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.innerHTML = renderPlayerCard(p, existingCards + i + 1);
+      const card = div.firstElementChild;
+      container.appendChild(card);
+      // Draw sparkline for new card only
+      drawSparkline('spark-' + (existingCards + i + 1), getHistoryForPlayer(p.name));
+    });
+  } else {
+    // Fresh render
+    container.innerHTML = visiblePlayers.map((p, i) => renderPlayerCard(p, i + 1)).join('');
+    // Draw sparklines for visible cards only — not entire dataset
+    visiblePlayers.forEach((p, i) => {
+      drawSparkline('spark-' + (i + 1), getHistoryForPlayer(p.name));
+    });
+  }
+
+  // Show More button
   if (hasMore) {
     const loadMore = document.createElement('button');
     loadMore.className = 'load-more-btn';
     const nextBatch = Math.min(20, remaining);
-    loadMore.textContent = `Show ${nextBatch} more  (${remaining} remaining)`;
+    loadMore.textContent = `Show ${nextBatch} more (${remaining} remaining)`;
     loadMore.onclick = () => {
       state.pageLimit = currentLimit + PAGE_SIZE;
       renderPlayerList();
-      // Scroll to where new results begin
       setTimeout(() => {
-        const cards = container.querySelectorAll('.player-card');
-        if (cards[currentLimit]) cards[currentLimit].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const newFirstCard = container.querySelectorAll('.player-card')[currentLimit];
+        if (newFirstCard) newFirstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     };
     container.appendChild(loadMore);
   }
-
-  // Draw sparklines after render
-  players.forEach((p, i) => {
-    drawSparkline('spark-' + (i + 1), getHistoryForPlayer(p.name));
-    // Signal bars drawn on expand only — not on initial render
-  });
 }
 
 // ── RENDER PLAYER CARD ────────────────────────────────────────────────────
