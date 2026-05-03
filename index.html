@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.3 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.4 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1039,7 +1039,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.3</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.4</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1084,9 +1084,9 @@
 <div class="list-container">
   <div class="list-header">
     <div class="list-title" id="listTitle">TOP PLAYERS</div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="last-updated" id="lastUpdated" style="padding:0;font-size:10px"></div>
-      <div class="list-count" id="listCount"></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:2px">
+      <div class="last-updated" id="lastUpdated" style="padding:0;font-size:10px;text-align:right"></div>
+      <div class="list-count" id="listCount" style="text-align:right"></div>
     </div>
   </div>
   <div id="playerList"></div>
@@ -1350,22 +1350,29 @@ function renderPlayerList() {
     return;
   }
 
-  // Paginate — show 25 at a time for non-filter views
+  // Paginate — always show 20 at a time regardless of view
   const PAGE_SIZE = 20;
-  const isFiltered = state.view !== 'rankings';
-  const visiblePlayers = isFiltered ? players : players.slice(0, state.pageLimit || PAGE_SIZE);
-  const hasMore = !isFiltered && players.length > (state.pageLimit || PAGE_SIZE);
+  const currentLimit = state.pageLimit || PAGE_SIZE;
+  const visiblePlayers = players.slice(0, currentLimit);
+  const remaining = players.length - currentLimit;
+  const hasMore = remaining > 0;
 
   container.innerHTML = visiblePlayers.map((p, i) => renderPlayerCard(p, i + 1)).join('');
 
-  // Load more button
+  // Show More button — appends next 20
   if (hasMore) {
     const loadMore = document.createElement('button');
     loadMore.className = 'load-more-btn';
-    loadMore.textContent = `Load more (${players.length - (state.pageLimit || PAGE_SIZE)} remaining)`;
+    const nextBatch = Math.min(20, remaining);
+    loadMore.textContent = `Show ${nextBatch} more  (${remaining} remaining)`;
     loadMore.onclick = () => {
-      state.pageLimit = (state.pageLimit || PAGE_SIZE) + PAGE_SIZE;
+      state.pageLimit = currentLimit + PAGE_SIZE;
       renderPlayerList();
+      // Scroll to where new results begin
+      setTimeout(() => {
+        const cards = container.querySelectorAll('.player-card');
+        if (cards[currentLimit]) cards[currentLimit].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     };
     container.appendChild(loadMore);
   }
