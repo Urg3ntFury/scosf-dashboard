@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.5 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.6 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -259,7 +259,7 @@
   }
 
   .summary-card.strong-buy .sc-value { color: var(--green-text); }
-  .summary-card.buy-candidate .sc-value { color: var(--blue); }
+  .summary-card.buy-candidate .sc-value { color: var(--green); }
   .summary-card.watchlist .sc-value { color: var(--amber); }
   .summary-card.total .sc-value { color: var(--white); }
 
@@ -316,7 +316,7 @@
   }
 
   .player-card.strong-buy::before { background: var(--green-text); }
-  .player-card.buy-candidate::before { background: var(--blue); }
+  .player-card.buy-candidate::before { background: var(--green-text); }
   .player-card.watchlist::before { background: var(--amber); }
   .player-card.monitor::before { background: var(--border); }
 
@@ -392,7 +392,7 @@
 
   .tier-pill { border-radius: 20px; font-weight: 500; display: inline-flex; align-items: center; gap: 3px; }
   .tier-pill.strong-buy { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(52,211,153,0.4); }
-  .tier-pill.buy-candidate { background: rgba(59,130,246,0.18); color: #93c5fd; border: 1px solid rgba(147,197,253,0.4); }
+  .tier-pill.buy-candidate { background: rgba(16,185,129,0.18); color: var(--green-text); border: 1px solid rgba(52,211,153,0.4); }
   .tier-pill.watchlist { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(252,211,77,0.4); }
   .tier-pill.monitor { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.25); }
 
@@ -412,7 +412,7 @@
   }
 
   .score-display.strong-buy { color: var(--green-text); }
-  .score-display.buy-candidate { color: #60a5fa; }
+  .score-display.buy-candidate { color: var(--green); }
   .score-display.watchlist { color: #fbbf24; }
 
   .rank-change {
@@ -986,6 +986,25 @@
     font-style: italic;
   }
 
+
+  .load-more-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .load-more-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.7);
+  }
 </style>
 </head>
 <body>
@@ -1013,7 +1032,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.5</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.6</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1041,9 +1060,9 @@
 </div>
 
 <!-- NCAA FB Pipeline Submenu — only shown when NFL is active -->
-<div class="pipeline-bar" id="pipelineBar" style="display:flex">
+<div class="pipeline-bar" id="pipelineBar">
   <button class="pipe-btn active" onclick="setPipeline('nfl')" id="pipe-nfl">NFL</button>
-  <button class="pipe-btn" onclick="setPipeline('ncaa')" id="pipe-ncaa">NCAA FB</button>
+  <button class="pipe-btn" onclick="setPipeline('2026')" id="pipe-2026">2026</button>
   <button class="pipe-btn" onclick="setPipeline('2027')" id="pipe-2027">2027</button>
   <button class="pipe-btn" onclick="setPipeline('2028')" id="pipe-2028">2028</button>
   <button class="pipe-btn" onclick="setPipeline('2029')" id="pipe-2029">2029+</button>
@@ -1084,7 +1103,8 @@ let state = {
   sources: null,
   summary: null,
   expandedPlayer: null,
-  loading: false
+  loading: false,
+  pageLimit: 25
 };
 
 // ── INIT ──────────────────────────────────────────────────────────────────
@@ -1212,11 +1232,17 @@ function updateSummaryStrip() {
   const strongBuy = players.filter(p => p.tier === 'STRONG BUY').length;
   const buyCandidate = players.filter(p => p.tier === 'BUY CANDIDATE').length;
   const watchlist = players.filter(p => p.tier === 'WATCHLIST').length;
-  const total = players.length;
   const monitor = players.filter(p => p.tier === 'MONITOR' || !p.tier).length;
+
+  // ALL count = total in database for current sport/pipeline (not just loaded)
+  let totalCount = players.length;
+  if (state.pipeline === 'nfl' || !state.pipeline) {
+    if (state.summary && state.summary['NFL']) totalCount = state.summary['NFL'].total || players.length;
+  }
+
   strip.innerHTML = `
     <div class="summary-card total clickable ${state.view === 'all' ? 'active-filter' : ''}" onclick="setView('all')">
-      <div class="sc-value">${total}</div>
+      <div class="sc-value">${totalCount}</div>
       <div class="sc-label">All</div>
     </div>
     <div class="summary-card strong-buy clickable ${state.view === 'strong' ? 'active-filter' : ''}" onclick="setView('strong')">
@@ -1289,7 +1315,25 @@ function renderPlayerList() {
     return;
   }
 
-  container.innerHTML = players.map((p, i) => renderPlayerCard(p, i + 1)).join('');
+  // Paginate — show 25 at a time for non-filter views
+  const PAGE_SIZE = 25;
+  const isFiltered = state.view !== 'rankings';
+  const visiblePlayers = isFiltered ? players : players.slice(0, state.pageLimit || PAGE_SIZE);
+  const hasMore = !isFiltered && players.length > (state.pageLimit || PAGE_SIZE);
+
+  container.innerHTML = visiblePlayers.map((p, i) => renderPlayerCard(p, i + 1)).join('');
+
+  // Load more button
+  if (hasMore) {
+    const loadMore = document.createElement('button');
+    loadMore.className = 'load-more-btn';
+    loadMore.textContent = `Load more (${players.length - (state.pageLimit || PAGE_SIZE)} remaining)`;
+    loadMore.onclick = () => {
+      state.pageLimit = (state.pageLimit || PAGE_SIZE) + PAGE_SIZE;
+      renderPlayerList();
+    };
+    container.appendChild(loadMore);
+  }
 
   // Draw sparklines after render
   players.forEach((p, i) => {
@@ -1816,6 +1860,7 @@ function setTimeframe(days, btn) {
 function setPipeline(pipeline) {
   state.pipeline = pipeline;
   state.expandedPlayer = null;
+  state.pageLimit = 25;
 
   // Update pipeline button active state
   document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
@@ -1839,7 +1884,7 @@ function setPipeline(pipeline) {
   }
 
   // NCAA FB views — load from NCAA FB tab
-  const draftYear = (pipeline === 'ncaa') ? null : pipeline;
+  const draftYear = (pipeline === '2026') ? null : pipeline;
 
   fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: draftYear || '' })
     .then(res => {
