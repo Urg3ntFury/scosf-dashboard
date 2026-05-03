@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.7 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.8 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1032,7 +1032,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.7</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.8</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1128,7 +1128,7 @@ async function loadData(showLoader = true) {
     // Load summary and current sport in parallel
     const [summaryRes, playersRes] = await Promise.all([
       fetchAPI('getDashboardSummary'),
-      fetchAPI('getTopPlayers', { sport: state.sport, limit: 20 })
+      fetchAPI('getTopPlayers', { sport: state.sport, limit: 200 })
     ]);
 
     state.summary = summaryRes;
@@ -1163,7 +1163,7 @@ async function loadOtherSports() {
   const others = ['NFL', 'MLB', 'NBA'].filter(s => s !== state.sport);
   for (const sport of others) {
     try {
-      const res = await fetchAPI('getTopPlayers', { sport, limit: 20 });
+      const res = await fetchAPI('getTopPlayers', { sport, limit: 200 });
       state.data[sport] = res.players || [];
       updateBadges();
     } catch(e) {}
@@ -1208,7 +1208,7 @@ async function switchSport(sport) {
   if (!state.data[sport]) {
     showLoading('Loading ' + sport + ' players...');
     try {
-      const res = await fetchAPI('getTopPlayers', { sport, limit: 20 });
+      const res = await fetchAPI('getTopPlayers', { sport, limit: 200 });
       state.data[sport] = res.players || [];
     } catch(e) {
       showToast('Failed to load ' + sport + ' data', 'error');
