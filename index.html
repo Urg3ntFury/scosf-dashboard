@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.3 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.4 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1009,7 +1009,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.3</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.4</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1353,7 +1353,12 @@ function renderPlayerCard(p, rank) {
           </div>
         </div>
         <div class="player-right">
-          <div class="score-display ${scoreClass}" style="font-size:26px;font-weight:600;letter-spacing:-0.5px">${p.score || 0}</div>
+          <div class="score-display" style="font-size:26px;font-weight:600;letter-spacing:-0.5px;color:${
+            p.tier === 'STRONG BUY' ? 'var(--green)' :
+            p.tier === 'BUY CANDIDATE' ? 'var(--green)' :
+            p.tier === 'WATCHLIST' ? 'var(--orange)' :
+            'var(--text-primary)'
+          }">${p.score || 0}</div>
           ${scoreChangeHtml}
           ${rankChangeHtml}
         </div>
@@ -1831,9 +1836,11 @@ function setPipeline(pipeline) {
       fetchAPI('getTopPlayers', { sport: 'NFL', limit: 200 })
         .then(res => {
           state.data['NFL'] = res.players || [];
+          updateSummaryStrip();
           renderPlayerList();
         }).catch(() => renderPlayerList());
     } else {
+      updateSummaryStrip();
       renderPlayerList();
     }
     return;
@@ -1845,8 +1852,12 @@ function setPipeline(pipeline) {
   fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: draftYear || '' })
     .then(res => {
       state.data['NCAA FB'] = res.players || [];
+      updateSummaryStrip();
       renderPlayerList();
-    }).catch(() => renderPlayerList());
+    }).catch(() => {
+      updateSummaryStrip();
+      renderPlayerList();
+    });
 }
 
 function setView(view) {
