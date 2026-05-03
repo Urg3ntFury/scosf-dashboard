@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.2 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.3 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1039,7 +1039,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.2</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.3</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1320,11 +1320,14 @@ function renderPlayerList() {
 
   // ── Step 2: Apply view filter on top of data source ───────────────────────
   if (state.view === 'watchlist') {
-    players = players.filter(p => p.tier === 'WATCHLIST' || p.tier === 'BUY CANDIDATE' || p.tier === 'STRONG BUY');
-    titleEl.textContent = 'WATCHLIST & ABOVE';
+    players = players.filter(p => p.tier === 'WATCHLIST');
+    titleEl.textContent = 'WATCHLIST';
   } else if (state.view === 'strong') {
     players = players.filter(p => p.tier === 'STRONG BUY' || p.tier === 'BUY CANDIDATE');
     titleEl.textContent = 'BUY SIGNALS';
+  } else if (state.view === 'rankings') {
+    players = players.filter(p => p.tier === 'MONITOR' || !p.tier);
+    titleEl.textContent = 'MONITOR';
   } else if (state.view === 'all') {
     titleEl.textContent = 'ALL PLAYERS';
   } else {
