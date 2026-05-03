@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.1 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -238,8 +238,8 @@
     background: var(--navy2);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 10px 14px;
-    min-width: 90px;
+    padding: 7px 14px;
+    min-width: 80px;
     text-align: center;
   }
 
@@ -1040,7 +1040,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.1</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1276,17 +1276,17 @@ function updateSummaryStrip() {
       <div class="sc-value">${totalCount}</div>
       <div class="sc-label">All</div>
     </div>
-    <div class="summary-card strong-buy clickable ${state.view === 'strong' ? 'active-filter' : ''}" onclick="setView('strong')">
-      <div class="sc-value">${strongBuy + buyCandidate}</div>
-      <div class="sc-label">Buy</div>
+    <div class="summary-card monitor clickable ${state.view === 'rankings' ? 'active-filter' : ''}" onclick="setView('rankings')">
+      <div class="sc-value" style="${state.view !== 'rankings' ? 'color:#7dd3fc' : ''}">${monitor}</div>
+      <div class="sc-label">Monitor</div>
     </div>
     <div class="summary-card watchlist clickable ${state.view === 'watchlist' ? 'active-filter' : ''}" onclick="setView('watchlist')">
       <div class="sc-value">${watchlist}</div>
       <div class="sc-label">Watchlist</div>
     </div>
-    <div class="summary-card monitor clickable ${state.view === 'rankings' ? 'active-filter' : ''}" onclick="setView('rankings')">
-      <div class="sc-value" style="${state.view !== 'rankings' ? 'color:#7dd3fc' : ''}">${monitor}</div>
-      <div class="sc-label">Monitor</div>
+    <div class="summary-card strong-buy clickable ${state.view === 'strong' ? 'active-filter' : ''}" onclick="setView('strong')">
+      <div class="sc-value">${strongBuy + buyCandidate}</div>
+      <div class="sc-label">Buy</div>
     </div>
   `;
 }
