@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.1 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.2 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -221,9 +221,9 @@
   /* ── SUMMARY CARDS ── */
   .summary-strip {
     display: flex;
-    gap: 8px;
-    padding: 12px 16px 12px;
-    max-width: 480px;
+    gap: 6px;
+    padding: 10px 16px 10px;
+    max-width: 100%;
     margin: 0 auto;
     overflow-x: auto;
     scrollbar-width: none;
@@ -234,24 +234,25 @@
   .summary-strip::-webkit-scrollbar { display: none; }
 
   .summary-card {
+    flex: 1;
     flex-shrink: 0;
     background: var(--navy2);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 7px 14px;
-    min-width: 80px;
+    padding: 6px 8px;
+    min-width: 0;
     text-align: center;
   }
 
   .summary-card .sc-value {
     font-family: var(--font-display);
-    font-size: 28px;
+    font-size: 22px;
     line-height: 1;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
 
   .summary-card .sc-label {
-    font-size: 10px;
+    font-size: 8px;
     font-family: var(--font-mono);
     color: var(--gray2);
     text-transform: uppercase;
@@ -837,11 +838,9 @@
 
   /* ── LAST UPDATED ── */
   .last-updated {
-    text-align: center;
     font-family: var(--font-mono);
     font-size: 10px;
     color: var(--gray2);
-    padding: 8px 0 4px;
     position: relative;
     z-index: 1;
   }
@@ -1040,7 +1039,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.1</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.2</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1081,14 +1080,14 @@
 <!-- Summary Strip -->
 <div class="summary-strip" id="summaryStrip"></div>
 
-<!-- Last Updated -->
-<div class="last-updated" id="lastUpdated"></div>
-
 <!-- Player List -->
 <div class="list-container">
   <div class="list-header">
     <div class="list-title" id="listTitle">TOP PLAYERS</div>
-    <div class="list-count" id="listCount"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="last-updated" id="lastUpdated" style="padding:0;font-size:10px"></div>
+      <div class="list-count" id="listCount"></div>
+    </div>
   </div>
   <div id="playerList"></div>
 </div>
