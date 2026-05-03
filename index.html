@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.8.4 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.9.0 — 2026-05-03 — MLB pipeline submenu -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -45,7 +45,6 @@
     overflow-x: hidden;
   }
 
-  /* ── BACKGROUND TEXTURE ── */
   body::before {
     content: '';
     position: fixed;
@@ -57,7 +56,6 @@
     z-index: 0;
   }
 
-  /* ── HEADER ── */
   header {
     position: sticky;
     top: 0;
@@ -135,7 +133,6 @@
   .refresh-btn.spinning { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── SPORT TABS ── */
   .sport-tabs {
     display: flex;
     gap: 0;
@@ -179,46 +176,39 @@
     line-height: 1.4;
   }
 
-  /* ── TIMEFRAME SELECTOR ── */
-  .timeframe-bar {
-    padding: 12px 16px;
-    max-width: 480px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .timeframe-scroll {
-    display: flex;
+  /* Pipeline submenu — shown for NFL and MLB */
+  .pipeline-bar {
+    display: none;
     gap: 6px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    -ms-overflow-style: none;
   }
+  .pipeline-bar::-webkit-scrollbar { display: none; }
 
-  .timeframe-scroll::-webkit-scrollbar { display: none; }
-
-  .tf-btn {
-    flex-shrink: 0;
-    padding: 5px 12px;
+  .pipe-btn {
+    padding: 5px 14px;
     border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--navy2);
-    color: var(--gray);
-    font-family: var(--font-mono);
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: rgba(255,255,255,0.5);
     font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.2s;
     white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .pipe-btn.active {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
   }
 
-  .tf-btn.active {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: var(--white);
-  }
-
-  /* ── SUMMARY CARDS ── */
   .summary-strip {
     display: flex;
     gap: 6px;
@@ -263,8 +253,8 @@
   .summary-card.buy-candidate .sc-value { color: var(--green); }
   .summary-card.watchlist .sc-value { color: var(--amber); }
   .summary-card.total .sc-value { color: var(--white); }
+  .summary-card.monitor .sc-value { color: #7dd3fc; }
 
-  /* ── PLAYER LIST ── */
   .list-container {
     padding: 0 16px 100px;
     max-width: 480px;
@@ -293,7 +283,6 @@
     color: var(--gray2);
   }
 
-  /* ── PLAYER CARD ── */
   .player-card {
     background: var(--navy2);
     border: 1px solid var(--border);
@@ -381,6 +370,20 @@
     border-radius: 4px;
   }
 
+  /* Level pill for MLB pipeline */
+  .level-pill {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .level-pill.mlb    { background: rgba(16,185,129,0.2);  color: #34d399; }
+  .level-pill.minors { background: rgba(37,99,235,0.2);   color: #93c5fd; }
+  .level-pill.ncaa   { background: rgba(245,158,11,0.2);  color: #fcd34d; }
+  .level-pill.hs     { background: rgba(167,139,250,0.2); color: #c4b5fd; }
+
   .tier-pill {
     font-family: var(--font-mono);
     font-size: 9px;
@@ -389,13 +392,15 @@
     border-radius: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
   }
-
-  .tier-pill { border-radius: 20px; font-weight: 500; display: inline-flex; align-items: center; gap: 3px; }
-  .tier-pill.strong-buy { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(52,211,153,0.4); }
-  .tier-pill.buy-candidate { background: rgba(16,185,129,0.18); color: var(--green-text); border: 1px solid rgba(52,211,153,0.4); }
-  .tier-pill.watchlist { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(252,211,77,0.4); }
-  .tier-pill.monitor { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.25); }
+  .tier-pill.strong-buy   { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(52,211,153,0.4); }
+  .tier-pill.buy-candidate{ background: rgba(16,185,129,0.18); color: var(--green-text); border: 1px solid rgba(52,211,153,0.4); }
+  .tier-pill.watchlist    { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(252,211,77,0.4); }
+  .tier-pill.monitor      { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.25); }
 
   .player-right {
     display: flex;
@@ -412,10 +417,6 @@
     color: var(--white);
   }
 
-  .score-display.strong-buy { color: var(--green-text); }
-  .score-display.buy-candidate { color: var(--green); }
-  .score-display.watchlist { color: #fbbf24; }
-
   .rank-change {
     display: flex;
     align-items: center;
@@ -428,127 +429,29 @@
   .rank-change.down { color: var(--red); }
   .rank-change.flat { color: var(--gray2); }
 
-  /* ── SPARKLINE ── */
-  .sparkline-container {
-    height: 0px;
-    margin: 0;
-    overflow: hidden;
-  }
+  .sparkline-container { height: 0px; margin: 0; overflow: hidden; }
+  .sparkline-container canvas { width: 100%; height: 100%; }
 
-  .sparkline-container canvas {
-    width: 100%;
-    height: 100%;
-  }
+  .signal-bars { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+  .signal-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .signal-bar-label { font-size: 10px; color: var(--gray2); width: 18px; flex-shrink: 0; }
+  .signal-bar-track { flex: 1; height: 5px; background: rgba(100,116,139,0.15); border-radius: 3px; overflow: hidden; }
+  .signal-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .signal-bar-value { font-size: 10px; color: var(--gray2); width: 14px; text-align: right; flex-shrink: 0; }
 
-  /* ── SIGNAL BARS ── */
-  .signal-bars {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 10px;
-  }
+  .mini-bars { display: flex; gap: 3px; margin-top: 5px; align-items: center; height: 6px; padding: 0 2px; }
+  .mini-bar-wrap { flex: 1; height: 100%; display: flex; align-items: center; }
+  .mini-bar { width: 100%; height: 3px; border-radius: 2px; }
 
-  .signal-bar-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .signal-bar-label {
-    font-size: 10px;
-    color: var(--gray2);
-    width: 18px;
-    flex-shrink: 0;
-  }
-
-  .signal-bar-track {
-    flex: 1;
-    height: 5px;
-    background: rgba(100,116,139,0.15);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .signal-bar {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.4s ease;
-  }
-
-  .signal-bar-value {
-    font-size: 10px;
-    color: var(--gray2);
-    width: 14px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  .signal-label {
-    display: none;
-  }
-
-  /* ── MINI SIGNAL BARS ── */
-  .mini-bars {
-    display: flex;
-    gap: 3px;
-    margin-top: 5px;
-    align-items: center;
-    height: 6px;
-    padding: 0 2px;
-  }
-  .mini-bar-wrap {
-    flex: 1;
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
-  .mini-bar {
-    width: 100%;
-    height: 3px;
-    border-radius: 2px;
-  }
-
-  /* ── EXPANDED PLAYER DETAIL ── */
-  .player-detail {
-    display: none;
-    margin-top: 8px;
-    padding-top: 8px;
-  }
-
+  .player-detail { display: none; margin-top: 8px; padding-top: 8px; }
   .player-detail.open { display: block; }
 
-  .detail-signals {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin-bottom: 12px;
-  }
+  .detail-signals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 
-  .signal-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 8px;
-    padding: 7px 10px;
-  }
+  .signal-row { display: flex; align-items: center; justify-content: space-between; border-radius: 8px; padding: 7px 10px; }
+  .signal-name { font-family: var(--font-mono); font-size: 10px; color: var(--gray); }
+  .signal-score { font-family: var(--font-display); font-size: 18px; color: var(--white); }
 
-  .signal-name {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gray);
-  }
-
-  .signal-score {
-    font-family: var(--font-display);
-    font-size: 18px;
-    color: var(--white);
-  }
-
-  .signal-score.high { color: var(--green-text); }
-  .signal-score.mid { color: #fbbf24; }
-  .signal-score.low { color: var(--gray2); }
-
-  /* ── BRIEF BUTTON ── */
   .brief-btn {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -568,23 +471,12 @@
     justify-content: center;
     gap: 7px;
   }
-
-  .brief-btn:hover {
-    background: linear-gradient(135deg, rgba(37,99,235,0.35), rgba(8,145,178,0.35));
-    border-color: rgba(37,99,235,0.7);
-  }
-
-  .brief-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
+  .brief-btn:hover { background: linear-gradient(135deg, rgba(37,99,235,0.35), rgba(8,145,178,0.35)); border-color: rgba(37,99,235,0.7); }
+  .brief-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .brief-btn .btn-icon { font-size: 14px; }
 
-  /* ── BRIEF OUTPUT ── */
   .brief-output { display: none; }
 
-  /* ── BRIEF MODAL ── */
   .brief-modal-overlay {
     display: none;
     position: fixed;
@@ -595,433 +487,91 @@
     overflow-y: auto;
   }
   .brief-modal-overlay.visible { display: flex; align-items: flex-start; justify-content: center; }
-  .brief-modal {
-    background: var(--navy2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    width: 100%;
-    max-width: 640px;
-    margin: 20px auto;
-    overflow: hidden;
-  }
-  .brief-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background: var(--navy3);
-    border-bottom: 1px solid var(--border);
-  }
-  .brief-modal-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--white);
-  }
-  .brief-modal-meta {
-    font-size: 11px;
-    color: var(--gray2);
-    margin-top: 2px;
-  }
-  .brief-modal-close {
-    background: none;
-    border: none;
-    color: var(--gray2);
-    font-size: 22px;
-    cursor: pointer;
-    padding: 0 4px;
-    line-height: 1;
-  }
+  .brief-modal { background: var(--navy2); border: 1px solid var(--border); border-radius: 14px; width: 100%; max-width: 640px; margin: 20px auto; overflow: hidden; }
+  .brief-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--navy3); border-bottom: 1px solid var(--border); }
+  .brief-modal-title { font-size: 15px; font-weight: 700; color: var(--white); }
+  .brief-modal-meta { font-size: 11px; color: var(--gray2); margin-top: 2px; }
+  .brief-modal-close { background: none; border: none; color: var(--gray2); font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1; }
   .brief-modal-close:hover { color: var(--white); }
-  .brief-modal-body {
-    padding: 20px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--gray);
-    white-space: pre-wrap;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
+  .brief-modal-body { padding: 20px; font-size: 13px; line-height: 1.7; color: var(--gray); white-space: pre-wrap; max-height: 70vh; overflow-y: auto; }
   .brief-modal-body strong, .brief-modal-body b { color: var(--white); }
 
-  /* ── LOADING STATE ── */
-  .loading-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(10,14,26,0.85);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 16px;
-  }
-
+  .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(10,14,26,0.85); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
   .loading-overlay.visible { display: flex; }
+  .loader { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .loading-text { font-family: var(--font-mono); font-size: 13px; color: var(--gray); }
 
-  .loader {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  .loading-text {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--gray);
-  }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--gray2);
-  }
-
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--gray2); }
   .empty-icon { font-size: 40px; margin-bottom: 12px; }
   .empty-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 8px; color: var(--gray); }
   .empty-text { font-size: 13px; line-height: 1.6; }
 
-  /* ── SOURCE HEALTH MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(10,14,26,0.9);
-    z-index: 150;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0;
-  }
-
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,14,26,0.9); z-index: 150; align-items: flex-end; justify-content: center; padding: 0; }
   .modal-overlay.visible { display: flex; }
+  .modal { background: var(--navy2); border: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 20px 16px 40px; width: 100%; max-width: 480px; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .modal-title { font-family: var(--font-display); font-size: 22px; letter-spacing: 1px; }
+  .modal-close { background: var(--navy3); border: none; color: var(--gray); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
 
-  .modal {
-    background: var(--navy2);
-    border: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
-    padding: 20px 16px 40px;
-    width: 100%;
-    max-width: 480px;
-    max-height: 80vh;
-    overflow-y: auto;
-    animation: slideUp 0.3s ease;
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .modal-title {
-    font-family: var(--font-display);
-    font-size: 22px;
-    letter-spacing: 1px;
-  }
-
-  .modal-close {
-    background: var(--navy3);
-    border: none;
-    color: var(--gray);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .source-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background: var(--navy3);
-    border-radius: 8px;
-    margin-bottom: 6px;
-  }
-
+  .source-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--navy3); border-radius: 8px; margin-bottom: 6px; }
   .source-item-left { flex: 1; min-width: 0; }
-
-  .source-item-name {
-    font-weight: 500;
-    font-size: 13px;
-    margin-bottom: 2px;
-  }
-
-  .source-item-signal {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gray2);
-  }
-
-  .source-status-badge {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 8px;
-    font-weight: 500;
-  }
-
+  .source-item-name { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+  .source-item-signal { font-family: var(--font-mono); font-size: 10px; color: var(--gray2); }
+  .source-status-badge { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 500; }
   .source-status-badge.active { background: rgba(16,185,129,0.15); color: var(--green-text); }
   .source-status-badge.backup { background: rgba(217,119,6,0.15); color: #fbbf24; }
   .source-status-badge.down { background: rgba(220,38,38,0.15); color: #f87171; }
   .source-status-badge.standby { background: rgba(100,116,139,0.1); color: var(--gray2); }
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav { display: none !important; /* replaced by clickable summary cards */ } .bottom-nav-DISABLED {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(10,14,26,0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    z-index: 100;
-  }
+  .bottom-nav { display: none !important; }
 
-  .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 8px 14px;
-    cursor: pointer;
-    transition: color 0.2s;
-    color: var(--gray2);
-    border: none;
-    background: none;
-  }
-
-  .nav-item.active { color: var(--blue); }
-  .nav-icon { font-size: 20px; margin-bottom: 3px; }
-  .nav-label { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
-
-  /* ── ERROR TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--navy3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 16px;
-    font-size: 13px;
-    color: var(--gray);
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 300;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  .toast.visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 13px; color: var(--gray); opacity: 0; transition: all 0.3s; z-index: 300; white-space: nowrap; pointer-events: none; }
+  .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.error { border-color: rgba(220,38,38,0.4); color: #f87171; }
   .toast.success { border-color: rgba(16,185,129,0.4); color: var(--green-text); }
 
-  /* ── LAST UPDATED ── */
-  .last-updated {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gray2);
-    position: relative;
-    z-index: 1;
-  }
+  .last-updated { font-family: var(--font-mono); font-size: 10px; color: var(--gray2); position: relative; z-index: 1; }
 
-  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-  /* Pipeline submenu — only visible on NFL */
-  body:not([data-sport="NFL"]) .pipeline-bar {
-    display: none !important;
-  }
-  /* Pipeline submenu */
-  .pipeline-bar {
-    display: flex;
-    gap: 6px;
-    padding: 8px 16px;
-    background: rgba(0,0,0,0.15);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .pipe-btn {
-    padding: 5px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: transparent;
-    color: rgba(255,255,255,0.5);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-  }
-  .pipe-btn.active {
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    border-color: rgba(255,255,255,0.3);
-  }
-
-  /* Clickable summary cards */
-  .summary-card.clickable {
-    cursor: pointer;
-    transition: transform 0.15s, opacity 0.15s;
-  }
+  .summary-card.clickable { cursor: pointer; transition: transform 0.15s, opacity 0.15s; }
   .summary-card.clickable:active { transform: scale(0.96); }
-  .summary-card.monitor .sc-value { color: #7dd3fc; }
-  .summary-card.active-filter {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.3);
-  }
+  .summary-card.active-filter { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); }
 
-  /* License icon */
-  .license-icon {
-    display: inline-block;
-    font-size: 9px;
-    color: #f59e0b;
-    margin-left: 4px;
-    vertical-align: middle;
-    cursor: help;
-  }
+  .license-icon { display: inline-block; font-size: 9px; color: #f59e0b; margin-left: 4px; vertical-align: middle; cursor: help; }
 
-  /* Draft eligible pill */
-  .draft-pill {
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 600;
-    background: rgba(99,102,241,0.2);
-    color: #a5b4fc;
-    border: 1px solid rgba(99,102,241,0.3);
-    letter-spacing: 0.3px;
-  }
+  .draft-pill { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); letter-spacing: 0.3px; }
 
-  /* Card suggestions */
-  .card-suggestions {
-    margin: 12px 0;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .cs-header {
-    padding: 8px 12px;
-    background: rgba(255,255,255,0.04);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.4);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .cs-tier-block {
-    padding: 8px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
+  .card-suggestions { margin: 12px 0; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; }
+  .cs-header { padding: 8px 12px; background: rgba(255,255,255,0.04); font-size: 10px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .cs-tier-block { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .cs-tier-block:last-child { border-bottom: none; }
-  .cs-tier-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
+  .cs-tier-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
   .cs-tier-label.low { color: #94a3b8; }
   .cs-tier-label.mid { color: #60a5fa; }
   .cs-tier-label.high { color: #fcd34d; }
-  .cs-card-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 3px;
-    padding: 3px 4px;
-    border-radius: 4px;
-    transition: background 0.15s;
-  }
-  .cs-card-row:hover {
-    background: rgba(255,255,255,0.06);
-  }
-  .cs-card-name {
-    font-size: 11px;
-    color: rgba(255,255,255,0.7);
-    flex: 1;
-    padding-right: 8px;
-  }
-  .cs-card-price {
-    font-size: 11px;
-    font-weight: 600;
-    color: #34d399;
-    font-family: var(--font-mono);
-    white-space: nowrap;
-  }
-  .cs-card-qty {
-    font-size: 10px;
-    color: rgba(255,255,255,0.3);
-    margin-left: 6px;
-    white-space: nowrap;
-  }
-  .cs-loading {
-    padding: 16px;
-    text-align: center;
-    color: rgba(255,255,255,0.3);
-    font-size: 12px;
-  }
-  .cs-empty {
-    padding: 10px 12px;
-    font-size: 11px;
-    color: rgba(255,255,255,0.3);
-    font-style: italic;
-  }
+  .cs-card-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; padding: 3px 4px; border-radius: 4px; transition: background 0.15s; }
+  .cs-card-row:hover { background: rgba(255,255,255,0.06); }
+  .cs-card-name { font-size: 11px; color: rgba(255,255,255,0.7); flex: 1; padding-right: 8px; }
+  .cs-card-price { font-size: 11px; font-weight: 600; color: #34d399; font-family: var(--font-mono); white-space: nowrap; }
+  .cs-card-qty { font-size: 10px; color: rgba(255,255,255,0.3); margin-left: 6px; white-space: nowrap; }
+  .cs-loading { padding: 16px; text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; }
+  .cs-empty { padding: 10px 12px; font-size: 11px; color: rgba(255,255,255,0.3); font-style: italic; }
 
-
-  .load-more-btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 8px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: var(--radius);
-    color: rgba(255,255,255,0.4);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .load-more-btn:hover {
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.7);
-  }
+  .load-more-btn { width: 100%; padding: 14px; margin-top: 8px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; }
+  .load-more-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); }
 </style>
 </head>
 <body>
 
-<!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loader"></div>
   <div class="loading-text" id="loadingText">Loading intelligence...</div>
 </div>
 
-<!-- Source Health Modal -->
 <div class="modal-overlay" id="sourceModal">
   <div class="modal">
     <div class="modal-header">
@@ -1032,13 +582,11 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8.4</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.9.0</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1049,7 +597,6 @@
   </div>
 </header>
 
-<!-- Sport Tabs -->
 <div class="sport-tabs">
   <div class="sport-tab active" onclick="switchSport('NFL')" id="tab-NFL">
     NFL
@@ -1065,21 +612,11 @@
   </div>
 </div>
 
-<!-- NCAA FB Pipeline Submenu — only shown when NFL is active -->
-<div class="pipeline-bar" id="pipelineBar">
-  <button class="pipe-btn active" onclick="setPipeline('nfl')" id="pipe-nfl">NFL</button>
-  <button class="pipe-btn" onclick="setPipeline('2026')" id="pipe-2026">2026</button>
-  <button class="pipe-btn" onclick="setPipeline('2027')" id="pipe-2027">2027</button>
-  <button class="pipe-btn" onclick="setPipeline('2028')" id="pipe-2028">2028</button>
-  <button class="pipe-btn" onclick="setPipeline('2029')" id="pipe-2029">2029+</button>
-</div>
+<!-- Pipeline submenu — NFL and MLB each have their own set of pills -->
+<div class="pipeline-bar" id="pipelineBar"></div>
 
-<!-- Timeframe bar removed -->
-
-<!-- Summary Strip -->
 <div class="summary-strip" id="summaryStrip"></div>
 
-<!-- Player List -->
 <div class="list-container">
   <div class="list-header" style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:flex-end">
     <div class="list-title" id="listTitle" style="text-align:left">TOP PLAYERS</div>
@@ -1089,17 +626,28 @@
   <div id="playerList"></div>
 </div>
 
-<!-- Bottom Nav — removed, replaced by clickable summary cards -->
-
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
 const API_URL = 'https://script.google.com/macros/s/AKfycbxbJfBx6Wd4rbAJFQTmRx11YNHAL8LxI3EKp6mKSLwhh9pAF_tMqFFthhuamqlLkLKl/exec';
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 
-// ── STATE ─────────────────────────────────────────────────────────────────
+// Pipeline config per sport
+const PIPELINES = {
+  NFL: [
+    { id: 'nfl',  label: 'NFL' },
+    { id: '2026', label: '2026' },
+    { id: '2027', label: '2027' },
+    { id: '2028', label: '2028' },
+    { id: '2029', label: '2029+' },
+  ],
+  MLB: [
+    { id: 'mlb',    label: 'MLB' },
+    { id: 'MINORS', label: 'MINORS' },
+    { id: 'NCAA',   label: 'NCAA' },
+    { id: 'HS',     label: 'HS' },
+  ]
+};
+
 let state = {
   sport: 'NFL',
-  timeframe: 7,
   view: 'all',
   pipeline: 'nfl',
   data: { NFL: null, MLB: null, NBA: null, 'NCAA FB': null },
@@ -1112,14 +660,31 @@ let state = {
   pageLimit: 20
 };
 
-// ── INIT ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  document.body.setAttribute('data-sport', 'NFL');
-  document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
-  const nflBtn = document.getElementById('pipe-nfl');
-  if (nflBtn) nflBtn.classList.add('active');
+  renderPipelineBar('NFL');
   loadData(false);
 });
+
+// ── PIPELINE BAR ──────────────────────────────────────────────────────────
+function renderPipelineBar(sport) {
+  const bar = document.getElementById('pipelineBar');
+  const pills = PIPELINES[sport];
+
+  if (!pills) {
+    bar.style.display = 'none';
+    bar.innerHTML = '';
+    return;
+  }
+
+  bar.style.display = 'flex';
+  bar.innerHTML = pills.map(p => `
+    <button class="pipe-btn ${p.id === state.pipeline ? 'active' : ''}"
+      onclick="setPipeline('${p.id}')"
+      id="pipe-${p.id}">
+      ${p.label}
+    </button>
+  `).join('');
+}
 
 // ── DATA LOADING ──────────────────────────────────────────────────────────
 async function loadData(showLoader = true) {
@@ -1128,11 +693,9 @@ async function loadData(showLoader = true) {
 
   const refreshBtn = document.getElementById('refreshBtn');
   refreshBtn.classList.add('spinning');
-
   if (showLoader) showLoading('Fetching latest scores...');
 
   try {
-    // Load summary and current sport in parallel
     const [summaryRes, playersRes] = await Promise.all([
       fetchAPI('getDashboardSummary'),
       fetchAPI('getTopPlayers', { sport: state.sport, limit: 200 })
@@ -1141,20 +704,18 @@ async function loadData(showLoader = true) {
     state.summary = summaryRes;
     state.data[state.sport] = playersRes.players || [];
 
-    // Load other sports + NCAA FB in background in parallel
     loadOtherSports();
-    // Preload NCAA FB so pipeline tab is instant
+
     if (!state.data['NCAA FB']) {
       fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
         .then(res => { state.data['NCAA FB'] = res.players || []; })
         .catch(() => {});
     }
 
-    // Load source health
     fetchAPI('getSourceHealth').then(res => {
       state.sources = res;
       updateSourceIndicator();
-      if (state.sport) renderSourceModal();
+      renderSourceModal();
     });
 
     updateSummaryStrip();
@@ -1173,14 +734,11 @@ async function loadData(showLoader = true) {
 }
 
 async function loadOtherSports() {
-  // Load all other sports in parallel — not sequential
   const others = ['NFL', 'MLB', 'NBA'].filter(s => s !== state.sport);
   others.forEach(sport => {
     fetchAPI('getTopPlayers', { sport, limit: 200 })
-      .then(res => {
-        state.data[sport] = res.players || [];
-        updateBadges();
-      }).catch(() => {});
+      .then(res => { state.data[sport] = res.players || []; updateBadges(); })
+      .catch(() => {});
   });
 }
 
@@ -1188,11 +746,7 @@ async function fetchAPI(action, params = {}) {
   const url = new URL(API_URL);
   url.searchParams.set('action', action);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-
-  const res = await fetch(url.toString(), {
-    method: 'GET',
-    redirect: 'follow',
-  });
+  const res = await fetch(url.toString(), { method: 'GET', redirect: 'follow' });
   if (!res.ok) throw new Error('API error: ' + res.status);
   return await res.json();
 }
@@ -1201,19 +755,15 @@ async function switchSport(sport) {
   state.sport = sport;
   state.expandedPlayer = null;
   state.pageLimit = 25;
-  state.pipeline = sport === 'NFL' ? 'nfl' : null;
+  state.view = 'all';
 
-  // Show/hide pipeline bar
-  document.body.setAttribute('data-sport', sport);
-  const _pb = document.getElementById('pipelineBar');
-  if (_pb) _pb.style.display = (sport === 'NFL') ? 'flex' : 'none';
+  // Set default pipeline per sport
+  if (sport === 'NFL') state.pipeline = 'nfl';
+  else if (sport === 'MLB') state.pipeline = 'mlb';
+  else state.pipeline = null;
 
-  // Reset pipeline buttons
-  document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
-  if (sport === 'NFL') {
-    const nflBtn = document.getElementById('pipe-nfl');
-    if (nflBtn) nflBtn.classList.add('active');
-  }
+  // Render pipeline bar for this sport (or hide if none)
+  renderPipelineBar(sport);
 
   // Update tabs
   document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
@@ -1237,49 +787,50 @@ async function switchSport(sport) {
   renderPlayerList();
 }
 
+// ── GET CURRENT PLAYERS based on sport + pipeline ─────────────────────────
+function getCurrentPlayers() {
+  const sport = state.sport;
+  const pipeline = state.pipeline;
+
+  if (sport === 'NFL') {
+    if (pipeline === 'nfl' || !pipeline) {
+      return state.data['NFL'] || [];
+    }
+    // NCAA FB draft class filter
+    let players = state.data['NCAA FB'] || [];
+    if (pipeline === '2026') return players.filter(p => parseInt(p.draftEligible) <= 2026);
+    if (pipeline === '2027') return players.filter(p => parseInt(p.draftEligible) === 2027);
+    if (pipeline === '2028') return players.filter(p => parseInt(p.draftEligible) === 2028);
+    if (pipeline === '2029') return players.filter(p => parseInt(p.draftEligible) >= 2029);
+    return players;
+  }
+
+  if (sport === 'MLB') {
+    let players = state.data['MLB'] || [];
+    if (pipeline === 'mlb')    return players.filter(p => p.level === 'MLB');
+    if (pipeline === 'MINORS') return players.filter(p => p.level === 'MINORS');
+    if (pipeline === 'NCAA')   return players.filter(p => p.level === 'NCAA');
+    if (pipeline === 'HS')     return players.filter(p => p.level === 'HS');
+    return players; // fallback: all
+  }
+
+  return state.data[sport] || [];
+}
+
 // ── RENDER SUMMARY STRIP ──────────────────────────────────────────────────
 function updateSummaryStrip() {
   const strip = document.getElementById('summaryStrip');
+  const players = getCurrentPlayers();
 
-  // Use the currently visible dataset — respects pipeline selection
-  let players;
-  if (state.sport === 'NFL') {
-    if (state.pipeline === 'nfl' || !state.pipeline) {
-      players = state.data['NFL'] || [];
-    } else {
-      players = state.data['NCAA FB'] || [];
-      if (state.pipeline === '2026') {
-        players = players.filter(p => parseInt(p.draftEligible) <= 2026);
-      } else if (state.pipeline === '2027') {
-        players = players.filter(p => parseInt(p.draftEligible) === 2027);
-      } else if (state.pipeline === '2028') {
-        players = players.filter(p => parseInt(p.draftEligible) === 2028);
-      } else if (state.pipeline === '2029') {
-        players = players.filter(p => parseInt(p.draftEligible) >= 2029);
-      }
-    }
-  } else {
-    players = state.data[state.sport] || [];
-  }
-
-  const strongBuy = players.filter(p => p.tier === 'STRONG BUY').length;
-  const buyCandidate = players.filter(p => p.tier === 'BUY CANDIDATE').length;
-  const watchlist = players.filter(p => p.tier === 'WATCHLIST').length;
-  const monitor = players.filter(p => p.tier === 'MONITOR' || !p.tier).length;
-
-  // ALL count = total in database for current sport/pipeline (not just loaded)
-  let totalCount = players.length;
-  const summaryKey = (state.sport === 'NFL' && (state.pipeline === 'nfl' || !state.pipeline)) ? 'NFL'
-    : (state.sport === 'MLB') ? 'MLB'
-    : (state.sport === 'NBA') ? 'NBA'
-    : null;
-  if (summaryKey && state.summary && state.summary[summaryKey]) {
-    totalCount = state.summary[summaryKey].total || players.length;
-  }
+  const strongBuy   = players.filter(p => p.tier === 'STRONG BUY').length;
+  const buyCandidate= players.filter(p => p.tier === 'BUY CANDIDATE').length;
+  const watchlist   = players.filter(p => p.tier === 'WATCHLIST').length;
+  const monitor     = players.filter(p => p.tier === 'MONITOR' || !p.tier).length;
+  const total       = players.length;
 
   strip.innerHTML = `
     <div class="summary-card total clickable ${state.view === 'all' ? 'active-filter' : ''}" onclick="setView('all')">
-      <div class="sc-value">${totalCount}</div>
+      <div class="sc-value">${total}</div>
       <div class="sc-label">All</div>
     </div>
     <div class="summary-card monitor clickable ${state.view === 'rankings' ? 'active-filter' : ''}" onclick="setView('rankings')">
@@ -1300,32 +851,11 @@ function updateSummaryStrip() {
 // ── RENDER PLAYER LIST ────────────────────────────────────────────────────
 function renderPlayerList() {
   const container = document.getElementById('playerList');
-  const titleEl = document.getElementById('listTitle');
-  const countEl = document.getElementById('listCount');
+  const titleEl   = document.getElementById('listTitle');
+  const countEl   = document.getElementById('listCount');
 
-  // ── Step 1: Get correct data source based on sport + pipeline ────────────
-  let players;
-  if (state.sport === 'NFL') {
-    if (state.pipeline === 'nfl' || !state.pipeline) {
-      players = state.data['NFL'] || [];
-    } else {
-      // NCAA FB pipeline view — filter by draft class
-      players = state.data['NCAA FB'] || [];
-      if (state.pipeline === '2026') {
-        players = players.filter(p => parseInt(p.draftEligible) <= 2026);
-      } else if (state.pipeline === '2027') {
-        players = players.filter(p => parseInt(p.draftEligible) === 2027);
-      } else if (state.pipeline === '2028') {
-        players = players.filter(p => parseInt(p.draftEligible) === 2028);
-      } else if (state.pipeline === '2029') {
-        players = players.filter(p => parseInt(p.draftEligible) >= 2029);
-      }
-    }
-  } else {
-    players = state.data[state.sport] || [];
-  }
+  let players = getCurrentPlayers();
 
-  // ── Step 2: Apply view filter on top of data source ───────────────────────
   if (state.view === 'watchlist') {
     players = players.filter(p => p.tier === 'WATCHLIST');
     titleEl.textContent = 'WATCHLIST';
@@ -1335,15 +865,11 @@ function renderPlayerList() {
   } else if (state.view === 'rankings') {
     players = players.filter(p => p.tier === 'MONITOR' || !p.tier);
     titleEl.textContent = 'MONITOR';
-  } else if (state.view === 'all') {
-    titleEl.textContent = 'ALL PLAYERS';
   } else {
-    titleEl.textContent = 'TOP PLAYERS';
+    titleEl.textContent = 'ALL PLAYERS';
   }
 
-  // Sort by score descending
   players = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
-
   countEl.textContent = players.length + ' players';
 
   if (players.length === 0) {
@@ -1352,39 +878,31 @@ function renderPlayerList() {
         <div class="empty-icon">📋</div>
         <div class="empty-title">No Players Yet</div>
         <div class="empty-text">Enter signal scores in Google Sheets to start seeing players ranked here.</div>
-      </div>
-    `;
+      </div>`;
     return;
   }
 
-  // Paginate — always show 20 at a time regardless of view
   const PAGE_SIZE = 20;
   const currentLimit = state.pageLimit || PAGE_SIZE;
   const visiblePlayers = players.slice(0, currentLimit);
   const remaining = players.length - currentLimit;
-  const hasMore = remaining > 0;
 
-  // Render visible cards
   container.innerHTML = visiblePlayers.map((p, i) => renderPlayerCard(p, i + 1)).join('');
 
-  // Draw sparklines for visible cards only
   visiblePlayers.forEach((p, i) => {
     drawSparkline('spark-' + (i + 1), getHistoryForPlayer(p.name));
   });
 
-  // Show More button
-  if (hasMore) {
+  if (remaining > 0) {
     const loadMore = document.createElement('button');
     loadMore.className = 'load-more-btn';
-    const nextBatch = Math.min(20, remaining);
-    loadMore.textContent = `Show ${nextBatch} more (${remaining} remaining)`;
+    loadMore.textContent = `Show ${Math.min(20, remaining)} more (${remaining} remaining)`;
     loadMore.onclick = (e) => {
       e.stopPropagation();
       state.pageLimit = currentLimit + PAGE_SIZE;
       const scrollY = window.scrollY;
       renderPlayerList();
-      // Restore scroll position then nudge down to new cards
-      setTimeout(() => { window.scrollTo(0, scrollY + 200); }, 50);
+      setTimeout(() => window.scrollTo(0, scrollY + 200), 50);
     };
     container.appendChild(loadMore);
   }
@@ -1393,11 +911,6 @@ function renderPlayerList() {
 // ── RENDER PLAYER CARD ────────────────────────────────────────────────────
 function renderPlayerCard(p, rank) {
   const tierClass = getTierClass(p.tier);
-  // Score color must match tier — use actual tier not score thresholds
-  const scoreClass = p.tier === 'STRONG BUY' ? 'strong-buy'
-    : p.tier === 'BUY CANDIDATE' ? 'buy-candidate'
-    : p.tier === 'WATCHLIST' ? 'watchlist'
-    : '';
   const rankChange = p.rankChange || 0;
   const rankChangeHtml = rankChange > 0
     ? `<span class="rank-change up">▲ ${rankChange}</span>`
@@ -1405,13 +918,24 @@ function renderPlayerCard(p, rank) {
     ? `<span class="rank-change down">▼ ${Math.abs(rankChange)}</span>`
     : `<span class="rank-change flat">— 0</span>`;
 
-  const isExpanded = state.expandedPlayer === p.name;
   const scoreChange = p.scoreChange || 0;
   const scoreChangeHtml = scoreChange > 0
     ? `<span style="color:var(--green-text);font-size:11px;font-family:var(--font-mono)">+${scoreChange}</span>`
     : scoreChange < 0
     ? `<span style="color:var(--red);font-size:11px;font-family:var(--font-mono)">${scoreChange}</span>`
     : '';
+
+  const isExpanded = state.expandedPlayer === p.name;
+
+  // Level pill for MLB
+  let levelPill = '';
+  if (p.sport === 'MLB' || state.sport === 'MLB') {
+    const lvl = (p.level || '').toLowerCase();
+    const lvlLabel = p.level || '';
+    if (lvlLabel) {
+      levelPill = `<span class="level-pill ${lvl}">${lvlLabel}</span>`;
+    }
+  }
 
   return `
     <div class="player-card ${tierClass}" onclick="togglePlayer('${p.name}', ${p.row}, '${p.sport}')" id="card-${rank}">
@@ -1426,22 +950,20 @@ function renderPlayerCard(p, rank) {
             <div class="player-meta">
               <span class="player-team">${p.team || ''}</span>
               <span class="player-pos">${p.position || ''}</span>
+              ${levelPill}
               ${p.draftEligible ? `<span class="draft-pill">${p.draftEligible}</span>` : ''}
               <span class="tier-pill ${tierClass}">${
-  p.tier === 'STRONG BUY' ? '▲ Strong buy' :
-  p.tier === 'BUY CANDIDATE' ? '● Buy candidate' :
-  p.tier === 'WATCHLIST' ? '■ Watchlist' :
-  '— Monitor'
-}</span>
+                p.tier === 'STRONG BUY'    ? '▲ Strong buy' :
+                p.tier === 'BUY CANDIDATE' ? '● Buy candidate' :
+                p.tier === 'WATCHLIST'     ? '■ Watchlist' : '— Monitor'
+              }</span>
             </div>
           </div>
         </div>
         <div class="player-right">
           <div class="score-display" style="font-size:26px;font-weight:600;letter-spacing:-0.5px;color:${
-            p.tier === 'STRONG BUY' ? 'var(--green)' :
-            p.tier === 'BUY CANDIDATE' ? 'var(--green)' :
-            p.tier === 'WATCHLIST' ? 'var(--orange)' :
-            'var(--text-primary)'
+            p.tier === 'STRONG BUY' || p.tier === 'BUY CANDIDATE' ? 'var(--green)' :
+            p.tier === 'WATCHLIST' ? 'var(--amber)' : 'var(--gray)'
           }">${p.score || 0}</div>
           ${scoreChangeHtml}
           ${rankChangeHtml}
@@ -1452,8 +974,6 @@ function renderPlayerCard(p, rank) {
         <canvas id="spark-${rank}" width="400" height="72"></canvas>
       </div>
 
-
-
       <div class="mini-bars">
         ${['s1Vegas','s2Usage','s3Transactions','s4Reporter','s5Prospects','s6PSA','s7Search'].map(k => {
           const v = parseFloat(p[k]) || 0;
@@ -1462,7 +982,7 @@ function renderPlayerCard(p, rank) {
         }).join('')}
       </div>
 
-      <div class="player-detail ${isExpanded ? 'open' : ''}" id="detail-${p.name.replace(/\s/g,'_')}">
+      <div class="player-detail ${isExpanded ? 'open' : ''}" id="detail-${p.name.replace(/[^a-zA-Z0-9]/g,'_')}">
         <div class="signal-bars" id="bars-${rank}" style="margin-bottom:12px"></div>
         <div class="detail-signals">
           ${renderSignalGrid(p)}
@@ -1481,67 +1001,45 @@ function renderPlayerCard(p, rank) {
   `;
 }
 
-
-// ── RENDER CARD SUGGESTIONS ───────────────────────────────────────────────
 function renderCardSuggestions(p) {
   const playerName = p.name || '';
   const raw = p.cardSuggestions || p.card_suggestions;
   if (!raw) {
-    return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Not yet generated — run generateAllCardSuggestions in Apps Script, or wait for Monday refresh</div>`;
+    return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Not yet generated — run generateAllCardSuggestions in Apps Script</div>`;
   }
-
   let data;
-  try {
-    data = typeof raw === 'string' ? JSON.parse(raw) : raw;
-  } catch(e) {
+  try { data = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch(e) {
     return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Suggestions unavailable</div>`;
   }
-
   const tiers = [
     { key: 'low', label: 'LOW  <$25', cls: 'low' },
     { key: 'mid', label: 'MID  $25-$100', cls: 'mid' },
     { key: 'high', label: 'HIGH  $100-$300', cls: 'high' }
   ];
-
   const licenseNote = p.cardCompany && p.cardCompany !== 'Bowman'
-    ? `<div style="padding:6px 12px;font-size:10px;color:#f59e0b;border-bottom:1px solid rgba(255,255,255,0.05)">◆ ${p.cardCompany} exclusive — target ${p.cardCompany} products only</div>`
-    : '';
-
+    ? `<div style="padding:6px 12px;font-size:10px;color:#f59e0b;border-bottom:1px solid rgba(255,255,255,0.05)">◆ ${p.cardCompany} exclusive</div>` : '';
   const draftNote = p.draftEligible
-    ? `<div style="padding:4px 12px;font-size:10px;color:#a5b4fc;border-bottom:1px solid rgba(255,255,255,0.05)">Draft eligible: ${p.draftEligible}</div>`
-    : '';
-
+    ? `<div style="padding:4px 12px;font-size:10px;color:#a5b4fc;border-bottom:1px solid rgba(255,255,255,0.05)">Draft eligible: ${p.draftEligible}</div>` : '';
   const tierBlocks = tiers.map(t => {
     const cards = data[t.key] || [];
     if (!cards.length) return '';
     const rows = cards.map(c => {
       const query = encodeURIComponent((c.card || '') + ' ' + playerName);
       const ebayUrl = 'https://www.ebay.com/sch/i.html?_nkw=' + query + '&_sop=1&LH_Auction=1';
-      return `
-      <div class="cs-card-row" onclick="window.open('${ebayUrl}', '_blank')" style="cursor:pointer">
-        <span class="cs-card-name" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2)">${c.card || ''}</span>
-        <span class="cs-card-price">${c.price || ''}</span>
-        <span class="cs-card-qty">${c.qty || ''}</span>
+      return `<div class="cs-card-row" onclick="window.open('${ebayUrl}','_blank')" style="cursor:pointer">
+        <span class="cs-card-name" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2)">${c.card||''}</span>
+        <span class="cs-card-price">${c.price||''}</span>
+        <span class="cs-card-qty">${c.qty||''}</span>
       </div>`;
     }).join('');
-    return `<div class="cs-tier-block">
-      <div class="cs-tier-label ${t.cls}">${t.label}</div>
-      ${rows}
-    </div>`;
+    return `<div class="cs-tier-block"><div class="cs-tier-label ${t.cls}">${t.label}</div>${rows}</div>`;
   }).join('');
-
   const now = new Date();
   const gen = data.generated ? new Date(data.generated) : null;
-  const daysOld = gen ? Math.floor((now - gen) / (1000*60*60*24)) : null;
-  const freshness = daysOld === 0 ? 'today' : daysOld === 1 ? 'yesterday' : daysOld > 1 ? daysOld + 'd ago' : '';
+  const daysOld = gen ? Math.floor((now-gen)/(1000*60*60*24)) : null;
+  const freshness = daysOld === 0 ? 'today' : daysOld === 1 ? 'yesterday' : daysOld > 1 ? daysOld+'d ago' : '';
   const genDate = data.generated ? `<span style="float:right;font-weight:400;opacity:0.5">${freshness}</span>` : '';
-
-  return `
-    <div class="cs-header">CARD TARGETS ${genDate}</div>
-    ${licenseNote}
-    ${draftNote}
-    ${tierBlocks || '<div class="cs-empty">No suggestions available</div>'}
-  `;
+  return `<div class="cs-header">CARD TARGETS ${genDate}</div>${licenseNote}${draftNote}${tierBlocks||'<div class="cs-empty">No suggestions available</div>'}`;
 }
 
 function getSignalColors(val, isNeg) {
@@ -1559,179 +1057,102 @@ function getSignalColors(val, isNeg) {
 
 function renderSignalGrid(p) {
   const signals = [
-    { label: 'ODDS', val: p.s1Vegas },
-    { label: 'USAGE', val: p.s2Usage },
+    { label: 'ODDS',     val: p.s1Vegas },
+    { label: 'USAGE',    val: p.s2Usage },
     { label: 'TRANSACT', val: p.s3Transactions },
     { label: 'REPORTER', val: p.s4Reporter },
     { label: 'PROSPECT', val: p.s5Prospects },
-    { label: 'PSA VOL', val: p.s6PSA },
-    { label: 'SOCIAL', val: p.s7Search },
-    { label: 'NEG SIG', val: -(p.negSignals || 0) },
+    { label: 'PSA VOL',  val: p.s6PSA },
+    { label: 'SOCIAL',   val: p.s7Search },
+    { label: 'NEG SIG',  val: -(p.negSignals || 0) },
   ];
-
   return signals.map(s => {
     const val = parseFloat(s.val) || 0;
-    const isNeg = s.label === 'NEG';
+    const isNeg = s.label === 'NEG SIG';
     const display = isNeg ? Math.abs(val) : val;
     const c = getSignalColors(display, isNeg);
-    return `
-      <div class="signal-row" style="background:${c.bg};border:1px solid ${c.border};border-radius:6px;padding:5px 10px;margin-bottom:3px">
-        <span class="signal-name" style="color:${c.text};opacity:0.8">${s.label}</span>
-        <span class="signal-score" style="color:${c.text};font-weight:600">${display}</span>
-      </div>
-    `;
+    return `<div class="signal-row" style="background:${c.bg};border:1px solid ${c.border};border-radius:6px;padding:5px 10px;margin-bottom:3px">
+      <span class="signal-name" style="color:${c.text};opacity:0.8">${s.label}</span>
+      <span class="signal-score" style="color:${c.text};font-weight:600">${display}</span>
+    </div>`;
   }).join('');
 }
 
-// ── SPARKLINE ─────────────────────────────────────────────────────────────
-function getHistoryForPlayer(name) {
-  return state.history[name] || [];
-}
+function getHistoryForPlayer(name) { return state.history[name] || []; }
 
 function drawSparkline(canvasId, historyData) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
-
   const ctx = canvas.getContext('2d');
   const W = canvas.offsetWidth * 2;
   const H = canvas.offsetHeight * 2;
-  canvas.width = W;
-  canvas.height = H;
+  canvas.width = W; canvas.height = H;
   ctx.clearRect(0, 0, W, H);
-
-  // Filter by timeframe
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - state.timeframe);
-  const filtered = historyData.filter(d => new Date(d.date) >= cutoff);
-
-  if (filtered.length < 2) {
-    // Draw flat line placeholder
-    ctx.strokeStyle = 'rgba(100,116,139,0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, H / 2);
-    ctx.lineTo(W, H / 2);
-    ctx.stroke();
+  if (historyData.length < 2) {
+    ctx.strokeStyle = 'rgba(100,116,139,0.3)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
     return;
   }
-
-  const scores = filtered.map(d => d.score);
-  const minS = Math.min(...scores);
-  const maxS = Math.max(...scores);
-  const range = maxS - minS || 1;
-
-  const points = filtered.map((d, i) => ({
-    x: (i / (filtered.length - 1)) * W,
-    y: H - ((d.score - minS) / range) * (H * 0.8) - H * 0.1
-  }));
-
-  // Gradient fill
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, 'rgba(37,99,235,0.3)');
-  grad.addColorStop(1, 'rgba(37,99,235,0)');
-
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, H);
-  points.forEach(p => ctx.lineTo(p.x, p.y));
-  ctx.lineTo(points[points.length-1].x, H);
-  ctx.closePath();
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Line
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  points.forEach(p => ctx.lineTo(p.x, p.y));
-  ctx.strokeStyle = '#2563eb';
-  ctx.lineWidth = 3;
-  ctx.lineJoin = 'round';
-  ctx.stroke();
-
-  // End dot
-  const last = points[points.length - 1];
-  ctx.beginPath();
-  ctx.arc(last.x, last.y, 5, 0, Math.PI * 2);
-  ctx.fillStyle = '#2563eb';
-  ctx.fill();
+  const scores = historyData.map(d => d.score);
+  const minS = Math.min(...scores); const maxS = Math.max(...scores); const range = maxS - minS || 1;
+  const points = historyData.map((d, i) => ({ x: (i/(historyData.length-1))*W, y: H-((d.score-minS)/range)*(H*0.8)-H*0.1 }));
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(37,99,235,0.3)'); grad.addColorStop(1,'rgba(37,99,235,0)');
+  ctx.beginPath(); ctx.moveTo(points[0].x,H);
+  points.forEach(p => ctx.lineTo(p.x,p.y));
+  ctx.lineTo(points[points.length-1].x,H); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(points[0].x,points[0].y);
+  points.forEach(p => ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
+  const last = points[points.length-1];
+  ctx.beginPath(); ctx.arc(last.x,last.y,5,0,Math.PI*2); ctx.fillStyle='#2563eb'; ctx.fill();
 }
 
 function drawSignalBars(containerId, p) {
   const container = document.getElementById(containerId);
   if (!container) return;
-
   const signals = [
-    { label: 'S1', val: parseFloat(p.s1Vegas) || 0 },
-    { label: 'S2', val: parseFloat(p.s2Usage) || 0 },
-    { label: 'S3', val: parseFloat(p.s3Transactions) || 0 },
-    { label: 'S4', val: parseFloat(p.s4Reporter) || 0 },
-    { label: 'S5', val: parseFloat(p.s5Prospects) || 0 },
-    { label: 'S6', val: parseFloat(p.s6PSA) || 0 },
-    { label: 'S7', val: parseFloat(p.s7Search) || 0 },
+    { label: 'S1', val: parseFloat(p.s1Vegas)||0 },
+    { label: 'S2', val: parseFloat(p.s2Usage)||0 },
+    { label: 'S3', val: parseFloat(p.s3Transactions)||0 },
+    { label: 'S4', val: parseFloat(p.s4Reporter)||0 },
+    { label: 'S5', val: parseFloat(p.s5Prospects)||0 },
+    { label: 'S6', val: parseFloat(p.s6PSA)||0 },
+    { label: 'S7', val: parseFloat(p.s7Search)||0 },
   ];
-
   container.innerHTML = signals.map(s => {
-    const pct = Math.max(1, (s.val / 10) * 100);
-    const color = s.val >= 9 ? '#34d399' :   // max — green
-                  s.val >= 7 ? '#fcd34d' :   // high — amber
-                  s.val >= 4 ? '#93c5fd' :   // mid — blue
-                  'rgba(100,116,139,0.35)';  // low — gray
-    return `
-      <div class="signal-bar-wrap">
-        <div class="signal-bar-label">${s.label}</div>
-        <div class="signal-bar-track">
-          <div class="signal-bar" style="width:${pct}%;background:${color}"></div>
-        </div>
-        <div class="signal-bar-value">${s.val > 0 ? s.val : ''}</div>
-      </div>
-    `;
+    const pct = Math.max(1,(s.val/10)*100);
+    const color = s.val>=9?'#34d399':s.val>=7?'#fcd34d':s.val>=4?'#93c5fd':'rgba(100,116,139,0.35)';
+    return `<div class="signal-bar-wrap">
+      <div class="signal-bar-label">${s.label}</div>
+      <div class="signal-bar-track"><div class="signal-bar" style="width:${pct}%;background:${color}"></div></div>
+      <div class="signal-bar-value">${s.val>0?s.val:''}</div>
+    </div>`;
   }).join('');
 }
 
-// ── TOGGLE PLAYER EXPAND ──────────────────────────────────────────────────
 async function togglePlayer(name, row, sport) {
-  const detailId = 'detail-' + name.replace(/\s/g, '_');
+  const detailId = 'detail-' + name.replace(/[^a-zA-Z0-9]/g,'_');
   const detail = document.getElementById(detailId);
   if (!detail) return;
-
   if (state.expandedPlayer === name) {
-    state.expandedPlayer = null;
-    detail.classList.remove('open');
-    return;
+    state.expandedPlayer = null; detail.classList.remove('open'); return;
   }
-
-  state.expandedPlayer = name;
-  detail.classList.add('open');
-
-  // Draw signal bars now that the expanded section is visible
-  if (state.players) {
-    const idx = state.players.findIndex(p => p.name === name);
-    if (idx !== -1) {
-      drawSignalBars('bars-' + (idx + 1), state.players[idx]);
-    }
-  }
-
-  // Load history for sparkline if not cached
+  state.expandedPlayer = name; detail.classList.add('open');
   if (!state.history[name]) {
     try {
       const res = await fetchAPI('getHistory', { player: name, sport });
       state.history[name] = res.history || [];
-      // Redraw sparklines
       renderPlayerList();
     } catch(e) {}
   }
 }
 
-// ── AI BRIEF GENERATION ───────────────────────────────────────────────────
 async function generateBrief(event, playerName, row, sport) {
-  event.stopPropagation();
-  event.preventDefault();
-
+  event.stopPropagation(); event.preventDefault();
   const btn = event.currentTarget;
-  if (btn.disabled) return; // Prevent double-tap on mobile
-
-  const outputId = btn.nextElementSibling.id;
-  const output = document.getElementById(outputId);
-
+  if (btn.disabled) return;
   btn.disabled = true;
   btn.innerHTML = '<span class="btn-icon">⏳</span> Generating brief...';
 
@@ -1740,164 +1161,56 @@ async function generateBrief(event, playerName, row, sport) {
 
   if (!player) {
     showToast('Player data not found', 'error');
-    btn.disabled = false;
-    btn.innerHTML = '<span class="btn-icon">⚡</span> Generate AI Brief';
-    return;
+    btn.disabled = false; btn.innerHTML = '<span class="btn-icon">⚡</span> Generate AI Brief'; return;
   }
 
-  // Check if we have a cached brief for today
   if (player.cachedBrief) {
     const today = new Date().toISOString().split('T')[0];
     const parts = player.cachedBrief.split('|BRIEF|');
     if (parts.length === 2 && parts[0] === today) {
-      // Show cached brief immediately — no API call needed
-      const modal = document.getElementById('briefModal');
-      document.getElementById('briefModalTitle').textContent = '⚡ AI Brief — ' + playerName;
-      document.getElementById('briefModalMeta').textContent = (player.sport || state.sport) + ' · ' + player.team + ' · ' + player.position + ' · Score: ' + player.score + ' · (cached)';
-      document.getElementById('briefModalBody').textContent = parts[1];
-      modal.classList.add('visible');
-      btn.disabled = false;
-      btn.innerHTML = '<span class="btn-icon">✓</span> Brief Generated';
-      return;
+      showBriefModal(playerName, player, parts[1], true);
+      btn.disabled = false; btn.innerHTML = '<span class="btn-icon">✓</span> Brief Generated'; return;
     }
   }
 
   const level = player.level ? ` (${player.level})` : '';
   const scoreChangeStr = player.scoreChange > 0 ? `+${player.scoreChange}` : `${player.scoreChange}`;
-  const rankChangeStr = player.rankChange > 0 ? `+${player.rankChange}` : `${player.rankChange}`;
-
   const signalContext = [];
-  if (player.s1Vegas >= 8) signalContext.push(`S1 Vegas Odds (${player.s1Vegas}/10): Award futures odds moving significantly — sharp money is betting on a breakout`);
-  else if (player.s1Vegas >= 5) signalContext.push(`S1 Vegas Odds (${player.s1Vegas}/10): Positive movement in award odds betting markets`);
-  else if (player.s1Vegas > 0) signalContext.push(`S1 Vegas Odds (${player.s1Vegas}/10): Modest positive movement in betting markets`);
-  if (player.s2Usage >= 8) signalContext.push(`S2 Usage/Role (${player.s2Usage}/10): Major role expansion — snap count or playing time has surged`);
-  else if (player.s2Usage >= 5) signalContext.push(`S2 Usage/Role (${player.s2Usage}/10): Notable increase in playing time or role`);
-  else if (player.s2Usage > 0) signalContext.push(`S2 Usage/Role (${player.s2Usage}/10): Slight uptick in usage`);
-  if (player.s3Transactions >= 8) signalContext.push(`S3 Transactions (${player.s3Transactions}/10): Major roster move directly expanding this player's opportunity`);
-  else if (player.s3Transactions >= 5) signalContext.push(`S3 Transactions (${player.s3Transactions}/10): Meaningful transaction activity affecting this player's role`);
-  else if (player.s3Transactions > 0) signalContext.push(`S3 Transactions (${player.s3Transactions}/10): Minor transaction news in play`);
-  if (player.s4Reporter >= 8) signalContext.push(`S4 Beat Reporter (${player.s4Reporter}/10): Named beat reporters citing sources — high-credibility insider information circulating`);
-  else if (player.s4Reporter >= 5) signalContext.push(`S4 Beat Reporter (${player.s4Reporter}/10): Credible media coverage emerging`);
-  else if (player.s4Reporter > 0) signalContext.push(`S4 Beat Reporter (${player.s4Reporter}/10): Some beat reporter coverage noted`);
-  if (player.s5Prospects >= 8) signalContext.push(`S5 Prospect Trajectory (${player.s5Prospects}/10): Rapidly rising through rankings — entering a key tier before the market catches up`);
-  else if (player.s5Prospects >= 5) signalContext.push(`S5 Prospect Trajectory (${player.s5Prospects}/10): Strong prospect ranking with positive momentum`);
-  else if (player.s5Prospects > 0) signalContext.push(`S5 Prospect Trajectory (${player.s5Prospects}/10): Prospect on the radar with ranking momentum`);
-  if (player.s6PSA >= 7) signalContext.push(`S6 PSA Grading Volume (${player.s6PSA}/10): Grading submissions surging — investors actively submitting cards, a leading indicator of price appreciation`);
-  else if (player.s6PSA > 0) signalContext.push(`S6 PSA Grading Volume (${player.s6PSA}/10): Growing grading activity signals increasing investor interest`);
-  if (player.s7Search >= 7) signalContext.push(`S7 Social Buzz (${player.s7Search}/10): Mention frequency spiking in card collector communities — awareness building ahead of broader market attention`);
-  else if (player.s7Search > 0) signalContext.push(`S7 Social Buzz (${player.s7Search}/10): Increasing discussion in sports card communities`);
+  if (player.s1Vegas >= 5) signalContext.push(`S1 Odds (${player.s1Vegas}/10)`);
+  if (player.s2Usage >= 5) signalContext.push(`S2 Usage (${player.s2Usage}/10)`);
+  if (player.s3Transactions >= 5) signalContext.push(`S3 Transactions (${player.s3Transactions}/10)`);
+  if (player.s4Reporter >= 5) signalContext.push(`S4 Reporter (${player.s4Reporter}/10)`);
+  if (player.s5Prospects >= 5) signalContext.push(`S5 Prospects (${player.s5Prospects}/10)`);
+  if (player.s6PSA >= 5) signalContext.push(`S6 PSA (${player.s6PSA}/10)`);
+  if (player.s7Search >= 5) signalContext.push(`S7 Social (${player.s7Search}/10)`);
 
-  const negContext = player.negSignals > 0 ? `\n\nNEGATIVE SIGNALS (${player.negSignals} penalty points): Injury, suspension, or adverse news is counteracting positive signals.` : '';
-  const signalSummary = signalContext.length > 0 ? signalContext.join('\n') : 'No significant signals currently firing.';
-
-  // Build sport-specific calendar context
-  const now = new Date();
   const sportCalendar = {
-    NFL: 'May 2026 NFL offseason. 2026 NFL Draft completed April 23-25. Free agency concluded. OTAs begin late May. Training camp opens late July. 2026 season begins September 2026.',
+    NFL: 'May 2026 NFL offseason. 2026 NFL Draft completed April 23-25. OTAs begin late May.',
     MLB: 'May 2026, approximately 30 games into the 2026 MLB regular season.',
-    NBA: 'May 2026 NBA Playoffs currently underway. Regular season concluded April 2026.'
+    NBA: 'May 2026 NBA Playoffs underway.'
   };
-  const calCtx = sportCalendar[sport] || '';
 
   const prompt = `You are a sports card investment analyst. Write a specific, actionable intelligence brief for ${playerName}.
 
-CRITICAL ACCURACY RULES — FAILURE TO FOLLOW THESE WILL RESULT IN A LOW QUALITY BRIEF:
-1. Search for current facts FIRST — before writing any section
-2. Only state facts you found in search results — never fill gaps with guesses or training data
-3. Never invent statistics, contract figures, quotes, or team affiliations — if you cannot verify it, do not include it
-4. If uncertain about a claim, say so explicitly: 'reportedly', 'per [source]', or 'as of [date]'
-5. Confirm the player's CURRENT team via search — do not assume from training data
-6. If search returns conflicting info, flag the conflict rather than picking one version
+PLAYER: ${playerName} | Sport: ${sport} | Team: ${player.team}${level} | Position: ${player.position}
+Score: ${player.score}/100 | Tier: ${player.tier} | Score Change: ${scoreChangeStr}
+Active signals: ${signalContext.join(', ') || 'None significant'}
+Calendar: ${sportCalendar[sport] || ''}
 
-PLAYER PROFILE:
-Name: ${playerName} | Sport: ${sport} | Team: ${player.team}${level} | Position: ${player.position}
-Composite Score: ${player.score}/100 | Tier: ${player.tier} | Score Change: ${scoreChangeStr} | Rank Change: ${rankChangeStr}
-
-CURRENT CALENDAR: ${calCtx}
-
-ACTIVE SIGNALS:
-${signalSummary}${negContext}
-
-Before writing the brief, search for:
-1. ${playerName} 2025 stats and performance
-2. ${playerName} contract situation 2026
-3. ${playerName} ${player.team} 2026 draft decisions and offseason moves
-
-Pay special attention to what the team did NOT do in the draft or offseason — a team choosing not to draft a replacement for a player entering a contract year is often the strongest possible vote of confidence, and a key signal the card market may not have priced in yet.
-
-Write a brief with exactly these five sections grounded in what you find:
-
-1. OPPORTUNITY SUMMARY
-Why is this specific player on the radar right now given the current calendar? Connect the signals to a concrete card investment thesis in 2-3 sentences. Be specific about the player's actual situation.
-
-2. SIGNAL DRIVERS
-Walk through each active signal with specific context. For transaction and reporter signals especially — explain what the SPECIFIC news was that generated the score, not a generic interpretation. If the team made a draft decision that affects this player's role, name it explicitly.
-
-3. CARD MARKET CONTEXT
-Name specific cards to target with realistic price ranges. Use ONLY currently licensed sets per league:
-- NFL (2026 rookies/current): Topps Chrome NFL, Topps Bowman University — Fanatics/Topps holds NFL license from April 2026. Do NOT recommend Panini for new NFL cards.
-- NFL (2025 and earlier veterans): 2025 Panini Prizm/Select are the LAST licensed Panini NFL cards — these may carry a scarcity premium as final licensed editions.
-- MLB: Topps Chrome, Bowman Chrome, Bowman Draft — Topps/Fanatics holds MLB license.
-- NBA: Panini Prizm, Select, National Treasures — Panini still holds NBA license (short-term deal).
-- NCAA FB prospects: Bowman University Chrome (Topps/Fanatics licensed) — UNLESS player has Panini exclusive NIL deal, then target Panini collegiate products only.
-- Unlicensed cards (any league) trade at 30-60% discount to licensed equivalents — avoid recommending unlicensed cards as primary investment targets.
-Where is the market underpricing this player?
-
-4. RISK FACTORS
-What specific risks apply to this player's actual situation? Be honest about what could go wrong.
-
-5. VERDICT & TIMING
-Clear action: Buy Now / Watch Closely / Hold / Avoid. Name the specific catalyst and realistic timeframe given the current ${calCtx}`;
+Search for current facts first. Write five sections: OPPORTUNITY SUMMARY, SIGNAL DRIVERS, CARD MARKET CONTEXT, RISK FACTORS, VERDICT & TIMING.`;
 
   try {
-    // Route through WebApp as GET to avoid CORS (Apps Script blocks POST from browser)
     const briefUrl = new URL(API_URL);
     briefUrl.searchParams.set('action', 'generateBrief');
     briefUrl.searchParams.set('prompt', prompt);
     briefUrl.searchParams.set('sport', sport);
     briefUrl.searchParams.set('row', row);
-
     const response = await fetch(briefUrl.toString(), { method: 'GET' });
     const data = await response.json();
     const briefText = data.brief || data.error || 'Unable to generate brief.';
-
-    // Show in modal
-    const modal = document.getElementById('briefModal');
-    document.getElementById('briefModalTitle').textContent = '⚡ AI Brief — ' + playerName;
-    document.getElementById('briefModalMeta').textContent = (player.sport || state.sport) + ' · ' + player.team + ' · ' + player.position + ' · Score: ' + player.score;
-    // Convert URLs in brief text to clickable links
-    function linkify(text) {
-      const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      return escaped.replace(/(https?:\/\/[^\s<]+)/g, function(url) {
-        // Clean trailing punctuation
-        const clean = url.replace(/[.,;:)]+$/, '');
-        return '<a href="' + clean + '" target="_blank" rel="noopener" style="color:#7FB3D3;text-decoration:underline;word-break:break-all;">' + clean + '</a>';
-      });
-    }
-
-    // Split out SOURCES section if present
-    const sourceSplit = briefText.split('\n---\nSOURCES:\n');
-    const mainText = sourceSplit[0];
-
-    // Convert markdown headers to styled text
-    let bodyHTML = linkify(mainText);
-
-    if (sourceSplit.length > 1) {
-      const sourcesRaw = sourceSplit[1];
-      const sourcesHTML = '<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);"><div style="color:#7FB3D3;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:0.5px;">SOURCES</div>' +
-        linkify(sourcesRaw) + '</div>';
-      document.getElementById('briefModalBody').innerHTML =
-        '<pre style="white-space:pre-wrap;margin:0;font-family:inherit">' + bodyHTML + '</pre>' + sourcesHTML;
-    } else {
-      document.getElementById('briefModalBody').innerHTML =
-        '<pre style="white-space:pre-wrap;margin:0;font-family:inherit">' + bodyHTML + '</pre>';
-    }
-    modal.classList.add('visible');
+    showBriefModal(playerName, player, briefText, false);
     btn.innerHTML = '<span class="btn-icon">✓</span> Brief Generated';
     btn.disabled = false;
-
-    // Brief is cached server-side automatically by WebApp generateBrief handler
-
   } catch(err) {
     showToast('Failed to generate brief', 'error');
     btn.disabled = false;
@@ -1905,79 +1218,62 @@ Clear action: Buy Now / Watch Closely / Hold / Avoid. Name the specific catalyst
   }
 }
 
-// ── TIMEFRAME ─────────────────────────────────────────────────────────────
-function setTimeframe(days, btn) {
-  state.timeframe = days;
-  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderPlayerList();
+function showBriefModal(playerName, player, briefText, cached) {
+  const modal = document.getElementById('briefModal');
+  document.getElementById('briefModalTitle').textContent = '⚡ AI Brief — ' + playerName;
+  document.getElementById('briefModalMeta').textContent = (player.sport||state.sport) + ' · ' + player.team + ' · ' + player.position + ' · Score: ' + player.score + (cached ? ' · (cached)' : '');
+  function linkify(text) {
+    const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return escaped.replace(/(https?:\/\/[^\s<]+)/g, url => {
+      const clean = url.replace(/[.,;:)]+$/,'');
+      return `<a href="${clean}" target="_blank" rel="noopener" style="color:#7FB3D3;text-decoration:underline;word-break:break-all;">${clean}</a>`;
+    });
+  }
+  const sourceSplit = briefText.split('\n---\nSOURCES:\n');
+  const mainText = sourceSplit[0];
+  let bodyHTML = linkify(mainText);
+  if (sourceSplit.length > 1) {
+    bodyHTML += '<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);"><div style="color:#7FB3D3;font-size:11px;font-weight:700;margin-bottom:8px;">SOURCES</div>' + linkify(sourceSplit[1]) + '</div>';
+  }
+  document.getElementById('briefModalBody').innerHTML = '<pre style="white-space:pre-wrap;margin:0;font-family:inherit">' + bodyHTML + '</pre>';
+  modal.classList.add('visible');
 }
 
-// ── VIEW ──────────────────────────────────────────────────────────────────
 function setPipeline(pipeline) {
   state.pipeline = pipeline;
   state.expandedPlayer = null;
   state.pageLimit = 20;
+  state.view = 'all';
 
-  // Update pipeline button active state
+  // Update active pill
   document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('pipe-' + pipeline);
   if (btn) btn.classList.add('active');
 
-  if (pipeline === 'nfl') {
-    // Default NFL view — load NFL players normally
-    if (!state.data['NFL']) {
-      fetchAPI('getTopPlayers', { sport: 'NFL', limit: 200 })
-        .then(res => {
-          state.data['NFL'] = res.players || [];
-          updateSummaryStrip();
-          renderPlayerList();
-        }).catch(() => renderPlayerList());
-    } else {
-      updateSummaryStrip();
-      renderPlayerList();
+  // For NFL NCAA FB views, load if not cached
+  if (state.sport === 'NFL' && pipeline !== 'nfl') {
+    if (!state.data['NCAA FB'] || state.data['NCAA FB'].length === 0) {
+      fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
+        .then(res => { state.data['NCAA FB'] = res.players || []; updateSummaryStrip(); renderPlayerList(); })
+        .catch(() => renderPlayerList());
+      return;
     }
-    return;
   }
 
-  // NCAA FB views — use cached data if available, fetch once otherwise
-  if (state.data['NCAA FB'] && state.data['NCAA FB'].length > 0) {
-    updateSummaryStrip();
-    renderPlayerList();
-  } else {
-    fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
-      .then(res => {
-        state.data['NCAA FB'] = res.players || [];
-        updateSummaryStrip();
-        renderPlayerList();
-      }).catch(() => {
-        updateSummaryStrip();
-        renderPlayerList();
-      });
-  }
-}
-
-function setView(view) {
-  // If clicking active filter — deselect back to all
-  if (state.view === view) {
-    state.view = 'all';
-    state.pageLimit = 20;
-    updateSummaryStrip();
-    renderPlayerList();
-    return;
-  }
-  state.view = view;
-  state.pageLimit = 20;
+  // For MLB pipeline views, data is already in state.data['MLB'] filtered by level
   updateSummaryStrip();
   renderPlayerList();
 }
 
-// ── SOURCE HEALTH ─────────────────────────────────────────────────────────
+function setView(view) {
+  if (state.view === view) { state.view = 'all'; state.pageLimit = 20; updateSummaryStrip(); renderPlayerList(); return; }
+  state.view = view; state.pageLimit = 20; updateSummaryStrip(); renderPlayerList();
+}
+
 function updateSourceIndicator() {
   if (!state.sources) return;
   const dot = document.getElementById('sourceDot');
   const text = document.getElementById('sourceText');
-
   if (state.sources.hasIssues) {
     dot.className = 'source-dot warning';
     text.textContent = state.sources.issueCount + ' ISSUE' + (state.sources.issueCount > 1 ? 'S' : '');
@@ -1991,52 +1287,34 @@ function renderSourceModal() {
   if (!state.sources) return;
   const list = document.getElementById('sourceList');
   const primarySources = (state.sources.sources || []).filter(s => s.type === 'PRIMARY');
-
   list.innerHTML = primarySources.map(s => `
     <div class="source-item">
       <div class="source-item-left">
         <div class="source-item-name">${s.name}</div>
-        <div class="source-item-signal">${s.signal}${s.daysOnBackup ? ' · ' + s.daysOnBackup + ' days on backup' : ''}</div>
+        <div class="source-item-signal">${s.signal}${s.daysOnBackup ? ' · '+s.daysOnBackup+'d on backup' : ''}</div>
       </div>
-      <span class="source-status-badge ${s.status.toLowerCase().replace(' ', '-')}">${s.status}</span>
-    </div>
-  `).join('');
+      <span class="source-status-badge ${s.status.toLowerCase().replace(' ','-')}">${s.status}</span>
+    </div>`).join('');
 }
 
-function openSourceModal() {
-  renderSourceModal();
-  document.getElementById('sourceModal').classList.add('visible');
-}
+function openSourceModal() { renderSourceModal(); document.getElementById('sourceModal').classList.add('visible'); }
+function closeModal() { document.getElementById('sourceModal').classList.remove('visible'); }
 
-function closeModal() {
-  document.getElementById('sourceModal').classList.remove('visible');
-}
-
-// ── BADGES ────────────────────────────────────────────────────────────────
 function updateBadges() {
-  ['NFL', 'MLB', 'NBA'].forEach(sport => {
+  ['NFL','MLB','NBA'].forEach(sport => {
     const players = state.data[sport] || [];
     const hot = players.filter(p => p.tier === 'STRONG BUY' || p.tier === 'BUY CANDIDATE').length;
     const badge = document.getElementById('badge-' + sport);
-    if (badge) {
-      if (hot > 0) {
-        badge.textContent = hot;
-        badge.style.display = 'block';
-      } else {
-        badge.style.display = 'none';
-      }
-    }
+    if (badge) { badge.textContent = hot; badge.style.display = hot > 0 ? 'block' : 'none'; }
   });
 }
 
-// ── LAST UPDATED ──────────────────────────────────────────────────────────
 function updateLastUpdated() {
   const el = document.getElementById('lastUpdated');
   const now = new Date();
   el.textContent = 'Updated ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────
 function getTierClass(tier) {
   if (!tier) return 'monitor';
   const t = tier.toLowerCase();
@@ -2046,58 +1324,27 @@ function getTierClass(tier) {
   return 'monitor';
 }
 
-function showLoading(text = 'Loading...') {
-  document.getElementById('loadingText').textContent = text;
-  document.getElementById('loadingOverlay').classList.add('visible');
-}
+function showLoading(text='Loading...') { document.getElementById('loadingText').textContent=text; document.getElementById('loadingOverlay').classList.add('visible'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('visible'); }
+function showToast(msg, type='') { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast visible '+type; setTimeout(()=>t.classList.remove('visible'),3000); }
+function renderError() { document.getElementById('playerList').innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Connection Error</div><div class="empty-text">Could not reach Google Sheets.</div></div>'; }
 
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('visible');
-}
-
-function showToast(msg, type = '') {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className = 'toast visible ' + type;
-  setTimeout(() => toast.classList.remove('visible'), 3000);
-}
-
-function renderError() {
-  document.getElementById('playerList').innerHTML = `
-    <div class="empty-state">
-      <div class="empty-icon">⚠️</div>
-      <div class="empty-title">Connection Error</div>
-      <div class="empty-text">Could not reach Google Sheets. Check your internet connection and try refreshing.</div>
-    </div>
-  `;
-}
-
-// Close modal on overlay click
-document.getElementById('sourceModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-function closeBriefModal(event) {
-  if (event.target === document.getElementById('briefModal')) {
-    document.getElementById('briefModal').classList.remove('visible');
-  }
-}
-
+document.getElementById('sourceModal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+function closeBriefModal(event) { if(event.target===document.getElementById('briefModal')) document.getElementById('briefModal').classList.remove('visible'); }
 </script>
 
-  <!-- ── BRIEF MODAL ── -->
-  <div class="brief-modal-overlay" id="briefModal" onclick="closeBriefModal(event)">
-    <div class="brief-modal">
-      <div class="brief-modal-header">
-        <div>
-          <div class="brief-modal-title" id="briefModalTitle">AI Brief</div>
-          <div class="brief-modal-meta" id="briefModalMeta"></div>
-        </div>
-        <button class="brief-modal-close" onclick="document.getElementById('briefModal').classList.remove('visible')">✕</button>
+<div class="brief-modal-overlay" id="briefModal" onclick="closeBriefModal(event)">
+  <div class="brief-modal">
+    <div class="brief-modal-header">
+      <div>
+        <div class="brief-modal-title" id="briefModalTitle">AI Brief</div>
+        <div class="brief-modal-meta" id="briefModalMeta"></div>
       </div>
-      <div class="brief-modal-body" id="briefModalBody"></div>
+      <button class="brief-modal-close" onclick="document.getElementById('briefModal').classList.remove('visible')">✕</button>
     </div>
+    <div class="brief-modal-body" id="briefModalBody"></div>
   </div>
+</div>
 
 </body>
 </html>
