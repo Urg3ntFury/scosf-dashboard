@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.8.3 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.8.4 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1038,7 +1038,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8.3</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8.4</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1519,7 +1519,7 @@ function renderCardSuggestions(p) {
       const ebayUrl = 'https://www.ebay.com/sch/i.html?_nkw=' + query + '&_sop=1&LH_Auction=1';
       return `
       <div class="cs-card-row" onclick="window.open('${ebayUrl}', '_blank')" style="cursor:pointer">
-        <span class="cs-card-name" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2)">${c.card || ''} <span style="font-size:9px;opacity:0.4">↗</span></span>
+        <span class="cs-card-name" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2)">${c.card || ''}</span>
         <span class="cs-card-price">${c.price || ''}</span>
         <span class="cs-card-qty">${c.qty || ''}</span>
       </div>`;
