@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.9.0 — 2026-05-03 — MLB pipeline submenu -->
+<!-- SCOSF Dashboard v4.9.1 — 2026-05-03 — rank/score change UX cleanup -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -586,7 +586,7 @@
 
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.9.0</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.9.1</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -618,10 +618,9 @@
 <div class="summary-strip" id="summaryStrip"></div>
 
 <div class="list-container">
-  <div class="list-header" style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:flex-end">
+  <div class="list-header" style="display:flex;align-items:flex-end;justify-content:space-between">
     <div class="list-title" id="listTitle" style="text-align:left">TOP PLAYERS</div>
-    <div class="last-updated" id="lastUpdated" style="padding:0;font-size:11px;text-align:center"></div>
-    <div class="list-count" id="listCount" style="text-align:right;font-size:11px"></div>
+    <div class="last-updated" id="lastUpdated" style="padding:0;font-size:11px;text-align:right"></div>
   </div>
   <div id="playerList"></div>
 </div>
@@ -852,7 +851,6 @@ function updateSummaryStrip() {
 function renderPlayerList() {
   const container = document.getElementById('playerList');
   const titleEl   = document.getElementById('listTitle');
-  const countEl   = document.getElementById('listCount');
 
   let players = getCurrentPlayers();
 
@@ -870,7 +868,7 @@ function renderPlayerList() {
   }
 
   players = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
-  countEl.textContent = players.length + ' players';
+  // player count shown in summary strip ALL card
 
   if (players.length === 0) {
     container.innerHTML = `
@@ -941,7 +939,15 @@ function renderPlayerCard(p, rank) {
     <div class="player-card ${tierClass}" onclick="togglePlayer('${p.name}', ${p.row}, '${p.sport}')" id="card-${rank}">
       <div class="player-card-top">
         <div class="player-left">
-          <div class="rank-badge">${rank}</div>
+          <div style="display:flex;flex-direction:column;align-items:center;min-width:28px;gap:1px">
+            <div class="rank-badge">${rank}</div>
+            ${rankChange > 0
+              ? `<span style="color:var(--green-text);font-size:9px;font-family:var(--font-mono);line-height:1.2">▲${rankChange}</span>`
+              : rankChange < 0
+              ? `<span style="color:var(--red);font-size:9px;font-family:var(--font-mono);line-height:1.2">▼${Math.abs(rankChange)}</span>`
+              : `<span style="color:var(--gray2);font-size:9px;font-family:var(--font-mono);line-height:1.2;opacity:0.4">—</span>`
+            }
+          </div>
           <div class="player-info">
             <div class="player-name">
               ${p.name}
@@ -966,7 +972,6 @@ function renderPlayerCard(p, rank) {
             p.tier === 'WATCHLIST' ? 'var(--amber)' : 'var(--gray)'
           }">${p.score || 0}</div>
           ${scoreChangeHtml}
-          ${rankChangeHtml}
         </div>
       </div>
 
