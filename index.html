@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.1 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.2 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1009,7 +1009,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.1</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.2</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1038,7 +1038,8 @@
 
 <!-- NCAA FB Pipeline Submenu — only shown when NFL is active -->
 <div class="pipeline-bar" id="pipelineBar" style="display:flex">
-  <button class="pipe-btn active" onclick="setPipeline('all')" id="pipe-all">ALL NCAA</button>
+  <button class="pipe-btn active" onclick="setPipeline('nfl')" id="pipe-nfl">NFL</button>
+  <button class="pipe-btn" onclick="setPipeline('ncaa')" id="pipe-ncaa">NCAA FB</button>
   <button class="pipe-btn" onclick="setPipeline('2027')" id="pipe-2027">2027</button>
   <button class="pipe-btn" onclick="setPipeline('2028')" id="pipe-2028">2028</button>
   <button class="pipe-btn" onclick="setPipeline('2029')" id="pipe-2029">2029+</button>
@@ -1083,7 +1084,7 @@ let state = {
   sport: 'NFL',
   timeframe: 7,
   view: 'rankings',
-  pipeline: 'all',
+  pipeline: 'nfl',
   data: { NFL: null, MLB: null, NBA: null, 'NCAA FB': null },
   history: {},
   sources: null,
@@ -1094,9 +1095,12 @@ let state = {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Show pipeline bar since NFL is default
+  // Show pipeline bar since NFL is default, set NFL button active
   const pb = document.getElementById('pipelineBar');
   if (pb) pb.style.display = 'flex';
+  document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
+  const nflBtn = document.getElementById('pipe-nfl');
+  if (nflBtn) nflBtn.classList.add('active');
   loadData(false);
 });
 
@@ -1251,10 +1255,18 @@ function renderPlayerList() {
     players = players.slice(0, 20);
   }
 
-  // Filter NCAA FB by draft class if pipeline is set
-  if (state.sport === 'NFL' && state.pipeline !== 'all') {
-    const yr = parseInt(state.pipeline);
-    players = players.filter(p => parseInt(p.draftEligible) === yr);
+  // For NFL tab — use pipeline to determine data source
+  if (state.sport === 'NFL') {
+    if (state.pipeline === 'nfl' || !state.pipeline) {
+      players = state.data['NFL'] || [];
+    } else {
+      // NCAA FB pipeline views
+      players = state.data['NCAA FB'] || [];
+      if (state.pipeline !== 'ncaa') {
+        const yr = parseInt(state.pipeline);
+        players = players.filter(p => parseInt(p.draftEligible) === yr);
+      }
+    }
   }
 
   // Sort by score descending
@@ -1797,18 +1809,28 @@ function setPipeline(pipeline) {
   const btn = document.getElementById('pipe-' + pipeline);
   if (btn) btn.classList.add('active');
 
-  // Load NCAA FB data for this draft class
-  const draftYear = pipeline === 'all' ? null : pipeline;
-
-  if (!state.data['NCAA FB'] || draftYear) {
-    fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 100, draftYear })
-      .then(res => {
-        state.data['NCAA FB'] = res.players || [];
-        renderPlayerList();
-      }).catch(() => renderPlayerList());
-  } else {
-    renderPlayerList();
+  if (pipeline === 'nfl') {
+    // Default NFL view — load NFL players normally
+    if (!state.data['NFL']) {
+      fetchAPI('getTopPlayers', { sport: 'NFL', limit: 200 })
+        .then(res => {
+          state.data['NFL'] = res.players || [];
+          renderPlayerList();
+        }).catch(() => renderPlayerList());
+    } else {
+      renderPlayerList();
+    }
+    return;
   }
+
+  // NCAA FB views — load from NCAA FB tab
+  const draftYear = (pipeline === 'ncaa') ? null : pipeline;
+
+  fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: draftYear || '' })
+    .then(res => {
+      state.data['NCAA FB'] = res.players || [];
+      renderPlayerList();
+    }).catch(() => renderPlayerList());
 }
 
 function setView(view) {
