@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.8 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.7.9 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1032,7 +1032,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.8</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.9</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1102,6 +1102,7 @@ let state = {
   summary: null,
   expandedPlayer: null,
   loading: false,
+  switching: false,
   pageLimit: 20
 };
 
@@ -1134,8 +1135,14 @@ async function loadData(showLoader = true) {
     state.summary = summaryRes;
     state.data[state.sport] = playersRes.players || [];
 
-    // Load other sports in background
+    // Load other sports + NCAA FB in background in parallel
     loadOtherSports();
+    // Preload NCAA FB so pipeline tab is instant
+    if (!state.data['NCAA FB']) {
+      fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
+        .then(res => { state.data['NCAA FB'] = res.players || []; })
+        .catch(() => {});
+    }
 
     // Load source health
     fetchAPI('getSourceHealth').then(res => {
@@ -1160,14 +1167,15 @@ async function loadData(showLoader = true) {
 }
 
 async function loadOtherSports() {
+  // Load all other sports in parallel — not sequential
   const others = ['NFL', 'MLB', 'NBA'].filter(s => s !== state.sport);
-  for (const sport of others) {
-    try {
-      const res = await fetchAPI('getTopPlayers', { sport, limit: 200 });
-      state.data[sport] = res.players || [];
-      updateBadges();
-    } catch(e) {}
-  }
+  others.forEach(sport => {
+    fetchAPI('getTopPlayers', { sport, limit: 200 })
+      .then(res => {
+        state.data[sport] = res.players || [];
+        updateBadges();
+      }).catch(() => {});
+  });
 }
 
 async function fetchAPI(action, params = {}) {
@@ -1208,8 +1216,10 @@ async function switchSport(sport) {
   if (!state.data[sport]) {
     showLoading('Loading ' + sport + ' players...');
     try {
+      state.switching = true;
       const res = await fetchAPI('getTopPlayers', { sport, limit: 200 });
       state.data[sport] = res.players || [];
+      state.switching = false;
     } catch(e) {
       showToast('Failed to load ' + sport + ' data', 'error');
     } finally {
@@ -1915,17 +1925,21 @@ function setPipeline(pipeline) {
     return;
   }
 
-  // NCAA FB views — load from NCAA FB tab
-  // Always load all NCAA FB players — filter client-side for accuracy
-  fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
-    .then(res => {
-      state.data['NCAA FB'] = res.players || [];
-      updateSummaryStrip();
-      renderPlayerList();
-    }).catch(() => {
-      updateSummaryStrip();
-      renderPlayerList();
-    });
+  // NCAA FB views — use cached data if available, fetch once otherwise
+  if (state.data['NCAA FB'] && state.data['NCAA FB'].length > 0) {
+    updateSummaryStrip();
+    renderPlayerList();
+  } else {
+    fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
+      .then(res => {
+        state.data['NCAA FB'] = res.players || [];
+        updateSummaryStrip();
+        renderPlayerList();
+      }).catch(() => {
+        updateSummaryStrip();
+        renderPlayerList();
+      });
+  }
 }
 
 function setView(view) {
