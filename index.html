@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.8 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.8.1 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1032,7 +1032,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8.1</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1408,7 +1408,7 @@ function renderPlayerCard(p, rank) {
     : '';
 
   return `
-    <div class="player-card ${tierClass}" onclick="togglePlayer('${p.name}', ${p.row}, '${p.sport || state.sport}')" id="card-${rank}">
+    <div class="player-card ${tierClass}" onclick="togglePlayer('${p.name}', ${p.row}, '${p.sport}')" id="card-${rank}">
       <div class="player-card-top">
         <div class="player-left">
           <div class="rank-badge">${rank}</div>
@@ -1465,7 +1465,7 @@ function renderPlayerCard(p, rank) {
         <div class="card-suggestions" id="suggestions-${rank}">
           ${renderCardSuggestions(p)}
         </div>` : ''}
-        <button class="brief-btn" onclick="generateBrief(event, '${p.name}', ${p.row}, '${p.sport || state.sport}')" id="brief-btn-${rank}">
+        <button class="brief-btn" onclick="generateBrief(event, '${p.name}', ${p.row}, '${p.sport}')" id="brief-btn-${rank}">
           <span class="btn-icon">⚡</span>
           Generate AI Brief
         </button>
