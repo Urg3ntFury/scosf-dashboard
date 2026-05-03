@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.2 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.3 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1009,7 +1009,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.2</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.3</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1200,19 +1200,27 @@ async function switchSport(sport) {
 // ── RENDER SUMMARY STRIP ──────────────────────────────────────────────────
 function updateSummaryStrip() {
   const strip = document.getElementById('summaryStrip');
-  const players = state.data[state.sport] || [];
+
+  // Use the currently visible dataset — respects pipeline selection
+  let players;
+  if (state.sport === 'NFL') {
+    if (state.pipeline === 'nfl' || !state.pipeline) {
+      players = state.data['NFL'] || [];
+    } else {
+      players = state.data['NCAA FB'] || [];
+      if (state.pipeline !== 'ncaa') {
+        const yr = parseInt(state.pipeline);
+        players = players.filter(p => parseInt(p.draftEligible) === yr);
+      }
+    }
+  } else {
+    players = state.data[state.sport] || [];
+  }
 
   const strongBuy = players.filter(p => p.tier === 'STRONG BUY').length;
   const buyCandidate = players.filter(p => p.tier === 'BUY CANDIDATE').length;
   const watchlist = players.filter(p => p.tier === 'WATCHLIST').length;
-
-  // Use summary data if available
-  let total = players.length;
-  if (state.summary && state.summary[state.sport]) {
-    const s = state.summary[state.sport];
-    total = s.total || total;
-  }
-
+  const total = players.length;
   const monitor = players.filter(p => p.tier === 'MONITOR' || !p.tier).length;
   strip.innerHTML = `
     <div class="summary-card total clickable ${state.view === 'all' ? 'active-filter' : ''}" onclick="setView('all')">
@@ -1258,15 +1266,19 @@ function renderPlayerList() {
   // For NFL tab — use pipeline to determine data source
   if (state.sport === 'NFL') {
     if (state.pipeline === 'nfl' || !state.pipeline) {
+      // Standard NFL view
       players = state.data['NFL'] || [];
     } else {
-      // NCAA FB pipeline views
+      // NCAA FB pipeline view
       players = state.data['NCAA FB'] || [];
       if (state.pipeline !== 'ncaa') {
         const yr = parseInt(state.pipeline);
         players = players.filter(p => parseInt(p.draftEligible) === yr);
       }
     }
+  } else {
+    // MLB / NBA — always use their own data, no pipeline logic
+    players = state.data[state.sport] || [];
   }
 
   // Sort by score descending
@@ -1297,7 +1309,11 @@ function renderPlayerList() {
 // ── RENDER PLAYER CARD ────────────────────────────────────────────────────
 function renderPlayerCard(p, rank) {
   const tierClass = getTierClass(p.tier);
-  const scoreClass = p.score >= 76 ? 'strong-buy' : p.score >= 56 ? 'buy-candidate' : p.score >= 31 ? 'watchlist' : '';
+  // Score color must match tier — use actual tier not score thresholds
+  const scoreClass = p.tier === 'STRONG BUY' ? 'strong-buy'
+    : p.tier === 'BUY CANDIDATE' ? 'buy-candidate'
+    : p.tier === 'WATCHLIST' ? 'watchlist'
+    : '';
   const rankChange = p.rankChange || 0;
   const rankChangeHtml = rankChange > 0
     ? `<span class="rank-change up">▲ ${rankChange}</span>`
