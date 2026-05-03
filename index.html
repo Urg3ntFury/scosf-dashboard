@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.7 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.8 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1034,7 +1034,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.7</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.8</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1236,9 +1236,14 @@ function updateSummaryStrip() {
       players = state.data['NFL'] || [];
     } else {
       players = state.data['NCAA FB'] || [];
-      if (state.pipeline !== 'ncaa') {
-        const yr = parseInt(state.pipeline);
-        players = players.filter(p => parseInt(p.draftEligible) === yr);
+      if (state.pipeline === '2026') {
+        players = players.filter(p => parseInt(p.draftEligible) <= 2026);
+      } else if (state.pipeline === '2027') {
+        players = players.filter(p => parseInt(p.draftEligible) === 2027);
+      } else if (state.pipeline === '2028') {
+        players = players.filter(p => parseInt(p.draftEligible) === 2028);
+      } else if (state.pipeline === '2029') {
+        players = players.filter(p => parseInt(p.draftEligible) >= 2029);
       }
     }
   } else {
@@ -1305,10 +1310,18 @@ function renderPlayerList() {
     } else {
       // NCAA FB pipeline view
       players = state.data['NCAA FB'] || [];
-      if (state.pipeline !== 'ncaa') {
-        const yr = parseInt(state.pipeline);
-        players = players.filter(p => parseInt(p.draftEligible) === yr);
+      if (state.pipeline === '2026') {
+        // 2026 tab = eligible NOW or overdue (draft_eligible <= 2026)
+        const currentYear = new Date().getFullYear();
+        players = players.filter(p => parseInt(p.draftEligible) <= 2026);
+      } else if (state.pipeline === '2027') {
+        players = players.filter(p => parseInt(p.draftEligible) === 2027);
+      } else if (state.pipeline === '2028') {
+        players = players.filter(p => parseInt(p.draftEligible) === 2028);
+      } else if (state.pipeline === '2029') {
+        players = players.filter(p => parseInt(p.draftEligible) >= 2029);
       }
+      // pipeline === 'ncaa' or unrecognized = show all
     }
   } else {
     // MLB / NBA — always use their own data, no pipeline logic
@@ -1900,9 +1913,8 @@ function setPipeline(pipeline) {
   }
 
   // NCAA FB views — load from NCAA FB tab
-  const draftYear = (pipeline === '2026') ? null : pipeline;
-
-  fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: draftYear || '' })
+  // Always load all NCAA FB players — filter client-side for accuracy
+  fetchAPI('getTopPlayers', { sport: 'NCAA FB', limit: 200, draftYear: '' })
     .then(res => {
       state.data['NCAA FB'] = res.players || [];
       updateSummaryStrip();
