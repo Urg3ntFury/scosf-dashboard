@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.7.9 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.8 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1032,7 +1032,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.7.9</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1480,7 +1480,7 @@ function renderPlayerCard(p, rank) {
 function renderCardSuggestions(p) {
   const raw = p.cardSuggestions || p.card_suggestions;
   if (!raw) {
-    return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Suggestions generating — check back shortly</div>`;
+    return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Not yet generated — run generateAllCardSuggestions in Apps Script, or wait for Monday refresh</div>`;
   }
 
   let data;
@@ -1519,7 +1519,11 @@ function renderCardSuggestions(p) {
     </div>`;
   }).join('');
 
-  const genDate = data.generated ? `<span style="float:right;font-weight:400;opacity:0.5">${data.generated}</span>` : '';
+  const now = new Date();
+  const gen = data.generated ? new Date(data.generated) : null;
+  const daysOld = gen ? Math.floor((now - gen) / (1000*60*60*24)) : null;
+  const freshness = daysOld === 0 ? 'today' : daysOld === 1 ? 'yesterday' : daysOld > 1 ? daysOld + 'd ago' : '';
+  const genDate = data.generated ? `<span style="float:right;font-weight:400;opacity:0.5">${freshness}</span>` : '';
 
   return `
     <div class="cs-header">CARD TARGETS ${genDate}</div>
