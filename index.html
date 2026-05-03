@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.6 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.7 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -890,6 +890,8 @@
     transition: transform 0.15s, opacity 0.15s;
   }
   .summary-card.clickable:active { transform: scale(0.96); }
+  .summary-card.monitor .sc-value { color: #7dd3fc; }
+  .summary-card.monitor { border: 1px solid rgba(125,211,252,0.15); }
   .summary-card.active-filter {
     border: 1px solid rgba(255,255,255,0.3);
     background: rgba(255,255,255,0.08);
@@ -1032,7 +1034,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.6</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.7</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1188,6 +1190,20 @@ async function fetchAPI(action, params = {}) {
 async function switchSport(sport) {
   state.sport = sport;
   state.expandedPlayer = null;
+  state.pageLimit = 25;
+  state.pipeline = sport === 'NFL' ? 'nfl' : null;
+
+  // Show/hide pipeline bar
+  document.body.setAttribute('data-sport', sport);
+  const _pb = document.getElementById('pipelineBar');
+  if (_pb) _pb.style.display = (sport === 'NFL') ? 'flex' : 'none';
+
+  // Reset pipeline buttons
+  document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
+  if (sport === 'NFL') {
+    const nflBtn = document.getElementById('pipe-nfl');
+    if (nflBtn) nflBtn.classList.add('active');
+  }
 
   // Update tabs
   document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
@@ -1254,7 +1270,7 @@ function updateSummaryStrip() {
       <div class="sc-label">Watchlist</div>
     </div>
     <div class="summary-card monitor clickable ${state.view === 'rankings' ? 'active-filter' : ''}" onclick="setView('rankings')">
-      <div class="sc-value">${monitor}</div>
+      <div class="sc-value" style="color:#7dd3fc">${monitor}</div>
       <div class="sc-label">Monitor</div>
     </div>
   `;
