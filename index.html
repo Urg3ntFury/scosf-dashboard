@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.4 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.5 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -851,6 +851,10 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+  /* Pipeline submenu — only visible on NFL */
+  body:not([data-sport="NFL"]) .pipeline-bar {
+    display: none !important;
+  }
   /* Pipeline submenu */
   .pipeline-bar {
     display: flex;
@@ -1009,7 +1013,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.4</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.5</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1045,17 +1049,7 @@
   <button class="pipe-btn" onclick="setPipeline('2029')" id="pipe-2029">2029+</button>
 </div>
 
-<!-- Timeframe Bar -->
-<div class="timeframe-bar">
-  <div class="timeframe-scroll">
-    <button class="tf-btn active" onclick="setTimeframe(7, this)">7D</button>
-    <button class="tf-btn" onclick="setTimeframe(14, this)">14D</button>
-    <button class="tf-btn" onclick="setTimeframe(30, this)">30D</button>
-    <button class="tf-btn" onclick="setTimeframe(90, this)">3M</button>
-    <button class="tf-btn" onclick="setTimeframe(180, this)">6M</button>
-    <button class="tf-btn" onclick="setTimeframe(365, this)">12M</button>
-  </div>
-</div>
+<!-- Timeframe bar removed -->
 
 <!-- Summary Strip -->
 <div class="summary-strip" id="summaryStrip"></div>
@@ -1095,9 +1089,7 @@ let state = {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Show pipeline bar since NFL is default, set NFL button active
-  const pb = document.getElementById('pipelineBar');
-  if (pb) pb.style.display = 'flex';
+  document.body.setAttribute('data-sport', 'NFL');
   document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
   const nflBtn = document.getElementById('pipe-nfl');
   if (nflBtn) nflBtn.classList.add('active');
@@ -1861,6 +1853,13 @@ function setPipeline(pipeline) {
 }
 
 function setView(view) {
+  // If clicking active filter — deselect and go back to rankings
+  if (state.view === view && view !== 'rankings') {
+    state.view = 'rankings';
+    updateSummaryStrip();
+    renderPlayerList();
+    return;
+  }
   state.view = view;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event.currentTarget.classList.add('active');
