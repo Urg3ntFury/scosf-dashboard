@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.8.2 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.8.3 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -953,6 +953,12 @@
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 3px;
+    padding: 3px 4px;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .cs-card-row:hover {
+    background: rgba(255,255,255,0.06);
   }
   .cs-card-name {
     font-size: 11px;
@@ -1032,7 +1038,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8.2</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.8.3</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1478,6 +1484,7 @@ function renderPlayerCard(p, rank) {
 
 // ── RENDER CARD SUGGESTIONS ───────────────────────────────────────────────
 function renderCardSuggestions(p) {
+  const playerName = p.name || '';
   const raw = p.cardSuggestions || p.card_suggestions;
   if (!raw) {
     return `<div class="cs-header">CARD TARGETS</div><div class="cs-empty">Not yet generated — run generateAllCardSuggestions in Apps Script, or wait for Monday refresh</div>`;
@@ -1507,12 +1514,16 @@ function renderCardSuggestions(p) {
   const tierBlocks = tiers.map(t => {
     const cards = data[t.key] || [];
     if (!cards.length) return '';
-    const rows = cards.map(c => `
-      <div class="cs-card-row">
-        <span class="cs-card-name">${c.card || ''}</span>
+    const rows = cards.map(c => {
+      const query = encodeURIComponent((c.card || '') + ' ' + playerName);
+      const ebayUrl = 'https://www.ebay.com/sch/i.html?_nkw=' + query + '&_sop=1&LH_Auction=1';
+      return `
+      <div class="cs-card-row" onclick="window.open('${ebayUrl}', '_blank')" style="cursor:pointer">
+        <span class="cs-card-name" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2)">${c.card || ''} <span style="font-size:9px;opacity:0.4">↗</span></span>
         <span class="cs-card-price">${c.price || ''}</span>
         <span class="cs-card-qty">${c.qty || ''}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     return `<div class="cs-tier-block">
       <div class="cs-tier-label ${t.cls}">${t.label}</div>
       ${rows}
