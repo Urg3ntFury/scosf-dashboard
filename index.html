@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- SCOSF Dashboard v4.6.8 — 2026-05-02 -->
+<!-- SCOSF Dashboard v4.6.9 — 2026-05-02 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -220,6 +220,7 @@
 
   /* ── SUMMARY CARDS ── */
   .summary-strip {
+    margin-top: 10px;
     display: flex;
     gap: 8px;
     padding: 0 16px 12px;
@@ -1034,7 +1035,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.8</span></div>
+    <div class="logo">SCO<span>SF</span><span class="version-badge">v4.6.9</span></div>
     <div class="header-right">
       <div class="source-indicator" onclick="openSourceModal()" id="sourceIndicator">
         <div class="source-dot" id="sourceDot"></div>
@@ -1286,9 +1287,30 @@ function renderPlayerList() {
   const container = document.getElementById('playerList');
   const titleEl = document.getElementById('listTitle');
   const countEl = document.getElementById('listCount');
-  let players = state.data[state.sport] || [];
 
-  // Filter by view
+  // ── Step 1: Get correct data source based on sport + pipeline ────────────
+  let players;
+  if (state.sport === 'NFL') {
+    if (state.pipeline === 'nfl' || !state.pipeline) {
+      players = state.data['NFL'] || [];
+    } else {
+      // NCAA FB pipeline view — filter by draft class
+      players = state.data['NCAA FB'] || [];
+      if (state.pipeline === '2026') {
+        players = players.filter(p => parseInt(p.draftEligible) <= 2026);
+      } else if (state.pipeline === '2027') {
+        players = players.filter(p => parseInt(p.draftEligible) === 2027);
+      } else if (state.pipeline === '2028') {
+        players = players.filter(p => parseInt(p.draftEligible) === 2028);
+      } else if (state.pipeline === '2029') {
+        players = players.filter(p => parseInt(p.draftEligible) >= 2029);
+      }
+    }
+  } else {
+    players = state.data[state.sport] || [];
+  }
+
+  // ── Step 2: Apply view filter on top of data source ───────────────────────
   if (state.view === 'watchlist') {
     players = players.filter(p => p.tier === 'WATCHLIST' || p.tier === 'BUY CANDIDATE' || p.tier === 'STRONG BUY');
     titleEl.textContent = 'WATCHLIST & ABOVE';
@@ -1299,33 +1321,6 @@ function renderPlayerList() {
     titleEl.textContent = 'ALL PLAYERS';
   } else {
     titleEl.textContent = 'TOP PLAYERS';
-    players = players.slice(0, 20);
-  }
-
-  // For NFL tab — use pipeline to determine data source
-  if (state.sport === 'NFL') {
-    if (state.pipeline === 'nfl' || !state.pipeline) {
-      // Standard NFL view
-      players = state.data['NFL'] || [];
-    } else {
-      // NCAA FB pipeline view
-      players = state.data['NCAA FB'] || [];
-      if (state.pipeline === '2026') {
-        // 2026 tab = eligible NOW or overdue (draft_eligible <= 2026)
-        const currentYear = new Date().getFullYear();
-        players = players.filter(p => parseInt(p.draftEligible) <= 2026);
-      } else if (state.pipeline === '2027') {
-        players = players.filter(p => parseInt(p.draftEligible) === 2027);
-      } else if (state.pipeline === '2028') {
-        players = players.filter(p => parseInt(p.draftEligible) === 2028);
-      } else if (state.pipeline === '2029') {
-        players = players.filter(p => parseInt(p.draftEligible) >= 2029);
-      }
-      // pipeline === 'ncaa' or unrecognized = show all
-    }
-  } else {
-    // MLB / NBA — always use their own data, no pipeline logic
-    players = state.data[state.sport] || [];
   }
 
   // Sort by score descending
